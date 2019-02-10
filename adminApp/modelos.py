@@ -1,21 +1,5 @@
 from django.db import models
 
-class Region(models.Model):
-    nombre = models.CharField(max_length = 60)
-
-class Ciudad(models.Model):
-    nombre = models.CharField(max_length = 30)
-    region = models.ForeignKey(Region, null=True, on_delete = models.SET_NULL)
-
-class Comuna(models.Model):
-    nombre = models.CharField(max_length = 30)
-    ciudad = models.ForeignKey(Ciudad, null=True, on_delete = models.SET_NULL)
-
-class Direccion(models.Model):
-    calle = models.CharField(max_length = 30)
-    numero = models.IntegerField()
-    comuna = models.ForeignKey(Comuna, null=True, on_delete = models.SET_NULL)
-
 class Colegio(models.Model):
     nombre = models.CharField(max_length = 30)
     direccion = models.ForeignKey(Direccion, null=True, on_delete = models.SET_NULL)
@@ -37,23 +21,6 @@ class Curso(models.Model):
     annio = models.IntegerField()
     es_activo = models.BooleanField(default = True)
 
-class Alumno(models.Model):
-    nombres = models.CharField(max_length = 30)
-    apellido_paterno = models.CharField(max_length = 15)
-    apellido_materno = models.CharField(max_length = 15)
-    rut = models.CharField(max_length = 10)
-    email = models.EmailField(max_length = 254)
-    telefono = models.CharField(max_length = 15)
-    fecha_ingreso = models.DateTimeField(auto_now=True)
-    fecha_nacimiento = models.DateField()
-    sexo = models.CharField(max_length = 10)
-    imagen = models.ImageField()
-    puntaje_ingreso = models.IntegerField(default=0)
-    curso = models.ForeignKey(Curso, null=True, on_delete = models.SET_NULL)
-    apoderado = models.ForeignKey(Apoderado, null=True, on_delete = models.SET_NULL)
-    direccion = models.ForeignKey(Direccion, null=True, on_delete = models.SET_NULL)
-    colegio = models.ForeignKey(Colegio, null=True, on_delete=models.SET_NULL)
-    es_activo = models.BooleanField(default = True)
 
 class Asignatura(models.Model):
     nombre = models.CharField(max_length = 15)
