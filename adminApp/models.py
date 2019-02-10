@@ -1,7 +1,7 @@
 from django.db import models
 
 class Region(models.Model):
-    nombre = models.CharField(max_length = 30)
+    nombre = models.CharField(max_length = 60)
 
 class Ciudad(models.Model):
     nombre = models.CharField(max_length = 30)
