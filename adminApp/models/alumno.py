@@ -21,3 +21,4 @@ class Alumno(models.Model):
     direccion = models.ForeignKey(Direccion, null=True, on_delete = models.SET_NULL)
     colegio = models.ForeignKey(Colegio, null=True, on_delete=models.SET_NULL)
     es_activo = models.BooleanField(default = True)
+    contrasenna = models.CharField(max_length = 10)

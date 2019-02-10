@@ -8,9 +8,27 @@ from adminApp.models.comuna import Comuna
 from adminApp.models.ciudad import Ciudad
 from adminApp.models.region import Region
 from adminApp.models.asistencia import Asistencia
-from adminApp.models.justificaion import Justificacion
+from adminApp.models.justificacion import Justificacion
 from adminApp.models.asignatura import Asignatura
+from adminApp.models.evaluacion import Evaluacion
+from adminApp.models.tipo_evaluacion import TipoEvaluacion
+from adminApp.models.profesor import Profesor
+from adminApp.models.observacion_docente import ObservacionDocente
+from adminApp.models.pregunta import Pregunta
+from adminApp.models.topico import Topico
+from adminApp.models.anotacion import Anotacion
+from adminApp.models.administrador import Administrador
+from adminApp.models.noticia import Noticia
 
+admin.site.register(Noticia)
+admin.site.register(Administrador)
+admin.site.register(Anotacion)
+admin.site.register(Topico)
+admin.site.register(Pregunta)
+admin.site.register(ObservacionDocente)
+admin.site.register(Profesor)
+admin.site.register(TipoEvaluacion)
+admin.site.register(Evaluacion)
 admin.site.register(Asignatura)
 admin.site.register(Alumno)
 admin.site.register(Apoderado)
