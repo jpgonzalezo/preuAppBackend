@@ -1,15 +1,17 @@
 from django.contrib import admin
-from adminApp.models import Alumno
-from adminApp.models import Apoderado
-from adminApp.models import Curso
-from adminApp.models import Colegio
-from adminApp.models import Direccion
-from adminApp.models import Comuna
-from adminApp.models import Ciudad
-from adminApp.models import Region
-from adminApp.models import Asistencia
-from adminApp.models import Justificacion
+from adminApp.models.alumno import Alumno
+from adminApp.models.apoderado import Apoderado
+from adminApp.models.curso import Curso
+from adminApp.models.colegio import Colegio
+from adminApp.models.direccion import Direccion
+from adminApp.models.comuna import Comuna
+from adminApp.models.ciudad import Ciudad
+from adminApp.models.region import Region
+from adminApp.models.asistencia import Asistencia
+from adminApp.models.justificaion import Justificacion
+from adminApp.models.asignatura import Asignatura
 
+admin.site.register(Asignatura)
 admin.site.register(Alumno)
 admin.site.register(Apoderado)
 admin.site.register(Curso)
