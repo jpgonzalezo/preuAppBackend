@@ -1,0 +1,11 @@
+SECRET_KEY = "1213123123ipo123jpo12j3qjnrdoiñjqw39eij123"
+DEBUG = True
+
+DEFAULT_LOCALE = 'es'
+MONGO_HOST = 'localhost'
+
+MONGO_DBNAME = 'vr_kids'
+MONGODB_SETTINGS = {
+ 'DB': 'vr_kids',
+ 'HOST': 'localhost'
+}

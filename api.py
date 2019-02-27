@@ -1,0 +1,26 @@
+from flask import Flask, Blueprint
+from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS
+from db import db
+from models.asignatura import Asignatura
+import json
+
+app = Flask(__name__)
+CORS(app)
+api_bp = Blueprint('api', __name__)
+api = Api(api_bp)
+app.register_blueprint(api_bp)
+
+
+def init_modules(app, api):
+    from resources import curso
+    curso.init_module(api)
+
+
+init_modules(app, api)
+
+for rule in app.url_map.iter_rules():
+    print(rule)
+
+if __name__ == '__main__':
+    app.run(debug=True)
