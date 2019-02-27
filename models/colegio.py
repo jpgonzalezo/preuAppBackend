@@ -1,9 +1,10 @@
 from db import db
 from datetime import datetime
+from models.direccion import Direccion
 
-class Institucion(db.Document):
+class Colegio(db.Document):
     nombre = db.StringField(verbose_name="Nombre Institucion", max_length=200)
-    fecha_creacion = db.DateTimeField(default=datetime.now)
+    direccion = db.EmbeddedDocumentField(Direccion)
 
     meta = {'strict': False}
 

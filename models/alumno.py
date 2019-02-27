@@ -1,6 +1,7 @@
 from db import db
 from datetime import datetime
-from models.institucion import Institucion
+from models.direccion import Direccion
+from models.colegio import Colegio
 
 class Alumno(db.Document):
     nombres = db.StringField()
@@ -10,8 +11,8 @@ class Alumno(db.Document):
     telefono = db.StringField(max_length=12)
     nombre_usuario = db.StringField(max_length=20)
     password = db.StringField(max_length=12)
-    matricula = db.StringField(max_length=20)
-    institucion = db.ReferenceField(Institucion)
+    direccion = db.EmbeddedDocumentField(Direccion)
+    colegio = db.ReferenceField(Colegio)
     meta = {'strict': False}
 
     def __str__(self):

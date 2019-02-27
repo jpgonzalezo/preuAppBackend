@@ -1,5 +1,4 @@
 from db import db
-from models.institucion import Institucion
 
 class Administrador(db.Document):
     nombres = db.StringField()
@@ -9,5 +8,4 @@ class Administrador(db.Document):
     telefono = db.StringField(max_length=12)
     nombre_usuario = db.StringField(max_length=20)
     password = db.StringField(max_length=12)
-    institucion = db.ReferenceField(Institucion)
     meta = {'strict': False}

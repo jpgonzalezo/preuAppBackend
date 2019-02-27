@@ -5,14 +5,16 @@ from libs.model_view import ModelView
 from db import db
 from flask_babelex import Babel
 from models.curso import Curso
-from models.institucion import Institucion
+from models.colegio import Colegio
 from models.asignatura import Asignatura
 from models.profesor import Profesor
 from models.alumno import Alumno
 from models.evaluacion import Evaluacion
 from models.inscripcion import Inscripcion
 from models.administrador import Administrador
-from models.portal import Portal
+from models.region import Region
+from models.ciudad import Ciudad 
+from models.comuna import Comuna
 
 def create_app(config="config.cfg"):
     app = Flask(__name__)
@@ -40,8 +42,11 @@ def add_views(admin):
     
     admin.add_view(ModelView(Evaluacion, "Evaluaciones", category="Evaluacion"))
     
-    admin.add_view(ModelView(Institucion, "Instituciones", category="Institucion"))
-    admin.add_view(ModelView(Portal, "Portales",category="Institucion"))
+    admin.add_view(ModelView(Colegio, "Colegios"))
+
+    admin.add_view(ModelView(Ciudad, "Ciudades",category="Direccion"))
+    admin.add_view(ModelView(Region, "Regiones",category="Direccion"))
+    admin.add_view(ModelView(Comuna, "Comunas",category="Direccion"))
 
 
 app, admin = create_app()
