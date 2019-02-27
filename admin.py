@@ -4,11 +4,13 @@ from flask_admin.base import MenuLink
 from libs.model_view import ModelView
 from db import db
 from flask_babelex import Babel
+
 from models.curso import Curso
 from models.colegio import Colegio
 from models.asignatura import Asignatura
 from models.profesor import Profesor
 from models.alumno import Alumno
+from models.apoderado import Apoderado
 from models.evaluacion import Evaluacion
 from models.inscripcion import Inscripcion
 from models.administrador import Administrador
@@ -21,7 +23,7 @@ def create_app(config="config.cfg"):
     app.config.from_pyfile(config)
     babel = Babel(app)
     db.init_app(app)
-    admin = Admin(app, name='VR4kidz', template_mode='bootstrap3')
+    admin = Admin(app, name='PreuApp', template_mode='bootstrap3')
     @babel.localeselector
     def get_locale():
         return "es"
@@ -38,7 +40,7 @@ def add_views(admin):
     admin.add_view(ModelView(Administrador, "Administradores de Institucion", category="Perfiles"))
     admin.add_view(ModelView(Profesor, "Profesores", category="Perfiles"))
     admin.add_view(ModelView(Alumno, "Alumnos", category="Perfiles"))
-    
+    admin.add_view(ModelView(Apoderado, "Apoderados", category="Perfiles"))
     
     admin.add_view(ModelView(Evaluacion, "Evaluaciones", category="Evaluacion"))
     
