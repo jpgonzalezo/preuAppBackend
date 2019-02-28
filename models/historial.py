@@ -1,5 +1,7 @@
 from db import db
+from datetime import datetime
+
 class Historial(db.EmbeddedDocument):
-    data = db.StringField()
-    correcta = db.BooleanField(default=False)
+    fecha = db.DateTimeField(default=datetime.now)
+    id_visto = db.StringField()
     meta = {'strict': False}

@@ -1,5 +1,7 @@
 from db import db
 from datetime import datetime
+from models.asignatura import Asignatura
+from models.direccion import Direccion
 
 class Profesor(db.Document):
     nombres = db.StringField(max_length=20)
@@ -9,4 +11,7 @@ class Profesor(db.Document):
     telefono = db.StringField(max_length=12)
     nombre_usuario = db.StringField(max_length=20)
     password = db.StringField(max_length=12)
+    direccion = db.EmbeddedDocumentField(Direccion)
+    rut = db.StringField(max_length=10)
+    asignatura = db.ReferenceField(Asignatura)
     meta = {'strict': False}
