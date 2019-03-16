@@ -8,10 +8,14 @@ def init_module(api):
     api.add_resource(CursoItem, '/cursos/<id>')
     api.add_resource(Cursos, '/cursos')
 
-
 class CursoItem(Resource):
     def get(self, id):
         return json.loads(Curso.objects(id=id).first().to_json())
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        data = data['data']
 
 
 class Cursos(Resource):

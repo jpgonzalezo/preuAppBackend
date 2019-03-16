@@ -14,13 +14,13 @@ app.register_blueprint(api_bp)
 
 def init_modules(app, api):
     from resources import curso
+    from resources import alumno
     curso.init_module(api)
+    alumno.init_module(api)
 
 
 init_modules(app, api)
 
-for rule in app.url_map.iter_rules():
-    print(rule)
 
 if __name__ == '__main__':
     app.run(debug=True)
