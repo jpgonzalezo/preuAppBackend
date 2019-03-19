@@ -1,8 +1,8 @@
 from db import db
 from datetime import datetime
 from models.direccion import Direccion
-
-class Apoderado(db.Document):
+import mongoengine_goodjson as gj
+class Apoderado(gj.Document):
     nombres = db.StringField()
     apellido_paterno = db.StringField(max_length=20)
     apellido_materno = db.StringField(max_length=20)
