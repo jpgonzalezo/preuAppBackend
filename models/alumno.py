@@ -3,6 +3,8 @@ from datetime import datetime
 from models.direccion import Direccion
 from models.colegio import Colegio
 from models.apoderado import Apoderado
+from models.curso import Curso
+import mongoengine_goodjson as gj
 
 TIPOS_SEXOS = [
     ("MASCULINO", "MASCULINO"),
@@ -10,7 +12,7 @@ TIPOS_SEXOS = [
     ("NO DEFINIDO", "NO DEFINIDO"),
     ]
 
-class Alumno(db.Document):
+class Alumno(gj.Document):
     nombres = db.StringField()
     apellido_paterno = db.StringField(max_length=20)
     apellido_materno = db.StringField(max_length=20)
@@ -24,6 +26,7 @@ class Alumno(db.Document):
     rut = db.StringField(max_length=10)
     sexo = db.StringField(choices=TIPOS_SEXOS)
     puntaje_ingreso = db.IntField()
+    curso = db.ReferenceField(Curso)
     meta = {'strict': False}
 
     def __str__(self):

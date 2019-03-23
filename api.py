@@ -16,9 +16,11 @@ def init_modules(app, api):
     from resources import curso
     from resources import alumno
     from resources import login
+    from resources import estadistica
     curso.init_module(api)
     alumno.init_module(api)
     login.init_module(api)
+    estadistica.init_module(api)
 
 
 init_modules(app, api)
