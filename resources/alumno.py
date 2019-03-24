@@ -10,13 +10,18 @@ import json
 from bson import json_util
 
 def init_module(api):
-    api.add_resource(AlumnosItem, '/alumnos/<id>')
+    api.add_resource(AlumnoItem, '/alumno/<id>')
     api.add_resource(Alumnos, '/alumnos')
 
 
-class AlumnosItem(Resource):
+class AlumnoItem(Resource):
     def get(self, id):
         return json_util.dumps(Alumno.objects(id=id).first().to_json())
+        
+    def delete(self, id):
+        alumno = Alumno.objects(id=id).first()
+        alumno.delete()
+        return{'Response':'borrado'}
 
 
 class Alumnos(Resource):
