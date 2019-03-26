@@ -8,7 +8,6 @@ from models.asignatura import Asignatura
 class Evaluacion(db.Document):
     alumno = db.ReferenceField(Alumno)
     prueba = db.ReferenceField(Prueba)
-    asignatura = db.ReferenceField(Asignatura)
     cantidad_buenas = db.IntField()
     cantidad_malas = db.IntField()
     cantidad_omitidas = db.IntField()

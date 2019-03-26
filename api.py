@@ -19,6 +19,7 @@ def init_modules(app, api):
     from resources import estadistica
     from resources import colegio
     from resources import apoderado
+    from resources import observacion
 
     curso.init_module(api)
     alumno.init_module(api)
@@ -26,6 +27,7 @@ def init_modules(app, api):
     estadistica.init_module(api)
     colegio.init_module(api)
     apoderado.init_module(api)
+    observacion.init_module(api)
 
 
 init_modules(app, api)

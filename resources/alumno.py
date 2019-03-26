@@ -4,6 +4,11 @@ from models.direccion import Direccion
 from models.colegio import Colegio
 from models.apoderado import Apoderado
 from models.curso import Curso
+from models.evaluacion import Evaluacion
+from models.prueba import Prueba
+from models.asignatura import Asignatura
+from models.asistencia import Asistencia
+from models.observacion import Observacion
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -12,11 +17,72 @@ from bson import json_util
 def init_module(api):
     api.add_resource(AlumnoItem, '/alumno/<id>')
     api.add_resource(Alumnos, '/alumnos')
+    api.add_resource(AlumnoHojaVida, '/hoja_vida/<id>')
 
+class AlumnoHojaVida(Resource):
+    def get(self,id):
+        alumno = Alumno.objects(id=id).first()
+        evaluaciones = Evaluacion.objects(alumno=alumno).all()
+        evaluaciones_matematicas = []
+        evaluaciones_lenguaje = []
+        ponderacion_matematicas = 0
+        ponderacion_lenguaje = 0
+        colegio = ""
+        if alumno.colegio!= None:
+            colegio = alumno.colegio.nombre
+        for evaluacion in evaluaciones:
+            if (evaluacion.prueba.asignatura.nombre == 'Matemáticas') and (evaluacion.prueba.tipo != "TAREA"):
+                evaluaciones_matematicas.append(evaluacion)
+
+            if (evaluacion.prueba.asignatura.nombre == 'Lenguaje') and (evaluacion.prueba.tipo != "TAREA"):
+                evaluaciones_lenguaje.append(evaluacion)
+        
+        for evaluacion_mat in evaluaciones_matematicas:
+            ponderacion_matematicas = ponderacion_matematicas + evaluacion_mat.puntaje
+
+        for evaluacion_leng in evaluaciones_lenguaje:
+            ponderacion_lenguaje = ponderacion_lenguaje + evaluacion_leng.puntaje
+
+        promedio_mat = 0
+        promedio_leng = 0
+
+        if ponderacion_matematicas>0:
+            promedio_mat = int((ponderacion_matematicas)/evaluaciones_matematicas.__len__())
+        
+        if ponderacion_lenguaje>0:
+            promedio_leng = int((ponderacion_lenguaje)/evaluaciones_lenguaje.__len__())
+        
+        asistencias = Asistencia.objects().all()
+        cantidad_presente = 0
+        for asistencia in asistencias:
+            for alumno_presente in asistencia.alumnos_presentes:
+                if alumno_presente.id == alumno.id:
+                    cantidad_presente = cantidad_presente + 1
+        
+        promedio_asistencia = 0
+        if cantidad_presente>0:
+            promedio_asistencia = int(100*(cantidad_presente/asistencias.__len__()))
+
+        observaciones = json.loads(Observacion.objects(alumno = alumno).all().to_json())
+
+        return {
+            'id': str(alumno.id),
+            'nombres' : alumno.nombres,
+            'calegio' : colegio,
+            'curso' : alumno.curso.nombre,
+            'apellido_paterno' : alumno.apellido_paterno,
+            'apellido_materno' : alumno.apellido_materno,
+            'telefono' : alumno.telefono,
+            'email' : alumno.email,
+            'ponderacion_matematicas' : promedio_mat,
+            'ponderacion_lenguaje' : promedio_leng,
+            'ponderacion_asistencia' : promedio_asistencia,
+            'observaciones' : observaciones
+        }
 
 class AlumnoItem(Resource):
     def get(self, id):
-        return json_util.dumps(Alumno.objects(id=id).first().to_json())
+        return json.loads(Alumno.objects(id=id).first().to_json())
         
     def delete(self, id):
         alumno = Alumno.objects(id=id).first()
