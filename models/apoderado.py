@@ -1,6 +1,7 @@
 from db import db
 from datetime import datetime
 from models.direccion import Direccion
+from models.alumno import Alumno
 import mongoengine_goodjson as gj
 class Apoderado(gj.Document):
     nombres = db.StringField()
@@ -12,7 +13,7 @@ class Apoderado(gj.Document):
     password = db.StringField(max_length=12)
     direccion = db.EmbeddedDocumentField(Direccion)
     rut = db.StringField(max_length=10)
-    
+    alumno = db.ReferenceField(Alumno)
     meta = {'strict': False}
 
     def __str__(self):

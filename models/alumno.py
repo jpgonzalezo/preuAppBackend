@@ -2,7 +2,6 @@ from db import db
 from datetime import datetime
 from models.direccion import Direccion
 from models.colegio import Colegio
-from models.apoderado import Apoderado
 from models.curso import Curso
 import mongoengine_goodjson as gj
 
@@ -22,7 +21,6 @@ class Alumno(gj.Document):
     password = db.StringField(max_length=12)
     direccion = db.EmbeddedDocumentField(Direccion)
     colegio = db.ReferenceField(Colegio)
-    apoderado = db.ReferenceField(Apoderado)
     rut = db.StringField(max_length=10)
     sexo = db.StringField(choices=TIPOS_SEXOS)
     puntaje_ingreso = db.IntField()

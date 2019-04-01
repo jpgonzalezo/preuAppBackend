@@ -92,18 +92,7 @@ class AlumnoItem(Resource):
 
 class Alumnos(Resource):
     def get(self):
-        alumnos = []
-        alumnos_data = Alumno.objects().all()
-        for alumno in alumnos_data:
-            alumnos.append({
-                'id' : str(alumno.id),
-                'nombres' : alumno.nombres,
-                'apellido_paterno' : alumno.apellido_paterno,
-                'apellido_materno' : alumno.apellido_materno,
-                'rut' : alumno.rut,
-                'curso' : alumno.curso.nombre
-            })
-        return alumnos
+        return json.loads(Alumno.objects().all().to_json())
 
     def post(self):
         data = request.data.decode()
@@ -119,7 +108,7 @@ class Alumnos(Resource):
         alumno.telefono = data_contacto['telefono']
         alumno.email = data_contacto['email']
         alumno.nombre_usuario = data_personal['nombre_usuario']
-        alumno.password = data_personal['password']
+        alumno.password = data_personal['rut']
         alumno.sexo = data_personal['sexo']
         alumno.rut = data_personal['rut']
         alumno.puntaje_ingreso = data_academico['puntaje_ingreso']
@@ -128,10 +117,8 @@ class Alumnos(Resource):
                               comuna=data_contacto['comuna'])
         alumno.direccion = direccion
         colegio = Colegio.objects(id=data_academico['colegio']).first()
-        apoderado = Apoderado.objects(id=data_academico['apoderado']).first()
         curso = Curso.objects(id=data_academico['curso']).first()
         alumno.colegio = colegio
-        alumno.apoderado = apoderado
         alumno.curso = curso
         alumno.save()
         return {'Response': 'exito', 
