@@ -2,8 +2,9 @@ from db import db
 from datetime import datetime
 from models.asignatura import Asignatura
 from models.direccion import Direccion
+import mongoengine_goodjson as gj
 
-class Profesor(db.Document):
+class Profesor(gj.Document):
     nombres = db.StringField(max_length=20)
     apellido_paterno = db.StringField(max_length=20)
     apellido_materno = db.StringField(max_length=20)
