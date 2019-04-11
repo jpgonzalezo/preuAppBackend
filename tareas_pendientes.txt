@@ -1,0 +1,23 @@
+1.- Recurso de alertas, post para crear una alerta, estas alertas se crean cuando:
+    Registro una nueva asistencia de clases
+    Registro una evalaución
+    Registro una alerta que proviene del Administrador, Profesor
+
+    get, para obtener todas las observaciones de un alumno
+    get, para obtener todas las observaciones de un curso
+
+    put de historial de visto de alerta
+
+2.- Recurso asistencia
+    post para crear asistencia de una clase en particular
+    get para obtener todas las asistencias
+    get para obtener las asistencias de un curso
+    get para obtener las asistencia de una asignatura
+    get para obtener las asistencias de un alumno
+    get para obtener las asistencias de una fecha
+
+3.- Recurso justificacion
+    post para una justificacion de una asistencia de un alumno
+    get para obtener todas las jstificaciones de un alumno
+    get para obtener todas las justificaciones de una asignatura
+    get para obtener todas las justificaciones de un curso
