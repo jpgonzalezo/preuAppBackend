@@ -15,14 +15,18 @@ class Asistencia(db.Document):
         curso = Curso.objects(id=self.curso.id).first()
         asignatura = Asignatura.objects(id=self.asignatura.id).first()
         alumnos_presentes = []
+        alumnos_ausentes = []
         for alumno in self.alumnos_presentes:
-            alumno_aux = Alumno.objects(id=self.alumno.id).first()
+            alumno_aux = Alumno.objects(id=alumno.id).first()
             alumnos_presentes.append(alumno_aux.to_dict())
 
-        #alumnos_ausentes = Alumno.objects(id=self.alumnos_ausentes.id).first()
+        for alumno in self.alumnos_ausentes:
+            alumno_aux = Alumno.objects(id=alumno.id).first()
+            alumnos_ausentes.append(alumno_aux.to_dict())
+
         return{
             "id": str(self.id),
             "asignatura" : asignatura.to_dict(),
-            "alumnos_presentes" : alumnos_presentes
-            
+            "alumnos_presentes" : alumnos_presentes,
+            "alumnos_ausentes" : alumnos_ausentes
         }

@@ -10,11 +10,11 @@
 
 2.- Recurso asistencia
     post para crear asistencia de una clase en particular
-    get para obtener todas las asistencias
-    get para obtener las asistencias de un curso
-    get para obtener las asistencia de una asignatura
-    get para obtener las asistencias de un alumno
-    get para obtener las asistencias de una fecha
+    get para obtener todas las asistencias -> OK
+    get para obtener las asistencias de un curso -> OK
+    get para obtener las asistencia de una asignatura -> OK
+    **get para obtener las asistencias de un alumno
+    **get para obtener las asistencias de una fecha
 
 3.- Recurso justificacion
     post para una justificacion de una asistencia de un alumno

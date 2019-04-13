@@ -31,7 +31,7 @@ class Alumno(gj.Document):
         return self.nombres
 
     def to_dict(self):
-        direccion = Direccion.objects(id=self.direccion.id).first()
+        #direccion = Direccion.objects(id=self.direccion.id).first()
         return{
             "id": str(self.id),
             "nombre": self.nombres,
@@ -40,6 +40,6 @@ class Alumno(gj.Document):
             "email": self.email,
             "telefono": self.telefono,
             "nombre_usuario": self.nombre_usuario,
-            "password": self.password,
-            "direccion": direccion.to_dict()
+            "password": self.password
+            #"direccion": direccion.to_dict()
         }
