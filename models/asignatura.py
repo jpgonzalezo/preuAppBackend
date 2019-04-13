@@ -8,3 +8,8 @@ class Asignatura(gj.Document):
 
     def __str__(self):
         return self.nombre
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "nombre": self.nombre
+        }

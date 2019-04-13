@@ -31,10 +31,10 @@ class Alumno(gj.Document):
         return self.nombres
 
     def to_dict(self):
-        direccion = Direccion.objects(id=self.direccion).first()
+        direccion = Direccion.objects(id=self.direccion.id).first()
         return{
-            "id": str(self.id)
-            "nombre": self.nombre,
+            "id": str(self.id),
+            "nombre": self.nombres,
             "apellido_paterno": self.apellido_paterno,
             "apellido_materno": self.apellido_materno,
             "email": self.email,

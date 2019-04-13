@@ -17,4 +17,7 @@ class AsistenciaItem(Resource):
 
 class Asistencias(Resource):
     def get(self):
-        return json.loads(Asistencia.objects().all().to_json())
+        response = []
+        for asistencia in Asistencia.objects().all():
+            response.append(asistencia.to_dict())
+        return response

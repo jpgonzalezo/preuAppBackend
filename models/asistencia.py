@@ -11,15 +11,18 @@ class Asistencia(db.Document):
     alumnos_presentes = db.ListField(db.ReferenceField(Alumno))
     alumnos_ausentes = db.ListField(db.ReferenceField(Alumno))
 
-  def to_dict(self):
+    def to_dict(self):
         curso = Curso.objects(id=self.curso.id).first()
         asignatura = Asignatura.objects(id=self.asignatura.id).first()
-        alumnos_presentes = Alumno.objects(id=self.alumnos_presentes.id).first()
-        alumnos_ausentes = Alumno.objects(id=self.alumnos_ausentes.id).first()
+        alumnos_presentes = []
+        for alumno in self.alumnos_presentes:
+            alumno_aux = Alumno.objects(id=self.alumno.id).first()
+            alumnos_presentes.append(alumno_aux.to_dict())
+
+        #alumnos_ausentes = Alumno.objects(id=self.alumnos_ausentes.id).first()
         return{
-            "id": str(self.id)
-            "curso" = curso.to_dict(),
-            "asignatura" = asignatura.to_dict(),
-            "alumnos_presentes" = alumnos_presentes.to_dict(),
-            "alumnos_ausentes" = alumnos_ausentes.to_dict()
+            "id": str(self.id),
+            "asignatura" : asignatura.to_dict(),
+            "alumnos_presentes" : alumnos_presentes
+            
         }
