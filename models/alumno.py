@@ -33,6 +33,7 @@ class Alumno(gj.Document):
     def to_dict(self):
         direccion = Direccion.objects(id=self.direccion).first()
         return{
+            "id": str(self.id)
             "nombre": self.nombre,
             "apellido_paterno": self.apellido_paterno,
             "apellido_materno": self.apellido_materno,
