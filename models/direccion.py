@@ -10,3 +10,11 @@ class Direccion(db.EmbeddedDocument):
     meta = {'strict': False}
     def __str__(self):
         return self.nombre
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "calle": self.calle,
+            "numero": self.numero,
+            "comuna": self.comuna
+        }
