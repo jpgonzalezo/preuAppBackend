@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request
+from flask import Flask, Blueprint, jsonify, request, send_file
 from models.alumno import Alumno
 from models.direccion import Direccion
 from models.colegio import Colegio
@@ -13,11 +13,15 @@ from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
 from bson import json_util
+from PIL import Image
+import os
 
 def init_module(api):
     api.add_resource(AlumnoItem, '/alumno/<id>')
     api.add_resource(Alumnos, '/alumnos')
     api.add_resource(AlumnoHojaVida, '/hoja_vida/<id>')
+    api.add_resource(AlumnoImagenItem, '/alumno_imagen/<id>')
+    api.add_resource(AlumnoImagenDefault, '/alumno_imagen_default/<id>')
 
 class AlumnoHojaVida(Resource):
     def get(self,id):
@@ -77,7 +81,8 @@ class AlumnoHojaVida(Resource):
             'ponderacion_matematicas' : promedio_mat,
             'ponderacion_lenguaje' : promedio_leng,
             'ponderacion_asistencia' : promedio_asistencia,
-            'observaciones' : observaciones
+            'observaciones' : observaciones,
+            'imagen': alumno.imagen
         }
 
 class AlumnoItem(Resource):
@@ -92,36 +97,55 @@ class AlumnoItem(Resource):
 
 class Alumnos(Resource):
     def get(self):
-        return json.loads(Alumno.objects().all().to_json())
+        response = []
+        alumnos = Alumno.objects().all()
+        for alumno in alumnos:
+            response.append(alumno.to_dict())
+        return response
+    
 
     def post(self):
         data = request.data.decode()
         data = json.loads(data)
-        data_personal = data['data_personal']
-        data_academico = data['data_academico']
-        data_contacto = data['data_contacto']
-
         alumno = Alumno()
-        alumno.nombres = data_personal['nombres']
-        alumno.apellido_paterno = data_personal['apellido_paterno']
-        alumno.apellido_materno = data_personal['apellido_materno']
-        alumno.telefono = data_contacto['telefono']
-        alumno.email = data_contacto['email']
-        alumno.nombre_usuario = data_personal['nombre_usuario']
-        alumno.password = data_personal['rut']
-        alumno.sexo = data_personal['sexo']
-        alumno.rut = data_personal['rut']
-        alumno.puntaje_ingreso = data_academico['puntaje_ingreso']
-        direccion = Direccion(calle=data_contacto['calle'],
-                              numero=data_contacto['numero'],
-                              comuna=data_contacto['comuna'])
+        alumno.nombres = data['nombres']
+        alumno.apellido_paterno = data['apellido_paterno']
+        alumno.apellido_materno = data['apellido_materno']
+        alumno.telefono = data['telefono']
+        alumno.email = data['email']
+        alumno.password = data['rut']
+        alumno.sexo = data['sexo']
+        alumno.rut = data['rut']
+        alumno.puntaje_ingreso = data['puntaje_ingreso']
+        direccion = Direccion(calle=data['calle'],
+                              numero=data['numero'],
+                              comuna=data['comuna'])
         alumno.direccion = direccion
-        colegio = Colegio.objects(id=data_academico['colegio']).first()
-        curso = Curso.objects(id=data_academico['curso']).first()
+        colegio = Colegio.objects(id=data['colegio']).first()
+        curso = Curso.objects(id=data['curso']).first()
         alumno.colegio = colegio
         alumno.curso = curso
         alumno.save()
-        return {'Response': 'exito', 
-                'nombres':data_personal['nombres'], 
-                'apellido_paterno':data_personal['apellido_paterno'], 
-                'apellido_materno':data_personal['apellido_materno']}
+        return {'Response': 'exito',
+                'id': str(alumno.id)}
+
+class AlumnoImagenItem(Resource):
+    def post(self,id):
+        imagen = Image.open(request.files['imagen'].stream).convert("RGB")
+        imagen.save(os.path.join("./uploads/alumnos", str(id)+".jpg"))
+        imagen.thumbnail((800, 800))
+        imagen.save(os.path.join("./uploads/alumnos", str(id)+'_thumbnail.jpg'))
+        alumno = Alumno.objects(id=id).first()
+        alumno.imagen = id
+        alumno.save()
+        return {'Response': 'exito'}
+    
+    def get(self,id):
+        return send_file('uploads/alumnos/'+id+'_thumbnail.jpg')
+
+class AlumnoImagenDefault(Resource):
+    def get(self,id):
+        alumno = Alumno.objects(id=id).first()
+        alumno.imagen = "default"
+        alumno.save()
+        return { 'Response':'exito'}

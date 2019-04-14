@@ -16,30 +16,34 @@ class Alumno(gj.Document):
     apellido_paterno = db.StringField(max_length=20)
     apellido_materno = db.StringField(max_length=20)
     email = db.EmailField()
-    telefono = db.StringField(max_length=12)
-    nombre_usuario = db.StringField(max_length=20)
+    telefono = db.StringField()
     password = db.StringField(max_length=12)
     direccion = db.EmbeddedDocumentField(Direccion)
     colegio = db.ReferenceField(Colegio)
-    rut = db.StringField(max_length=10)
+    rut = db.StringField()
     sexo = db.StringField(choices=TIPOS_SEXOS)
     puntaje_ingreso = db.IntField()
     curso = db.ReferenceField(Curso)
+    imagen = db.StringField()
     meta = {'strict': False}
 
     def __str__(self):
         return self.nombres
 
     def to_dict(self):
-        #direccion = Direccion.objects(id=self.direccion.id).first()
         return{
             "id": str(self.id),
-            "nombre": self.nombres,
+            "nombres": self.nombres,
             "apellido_paterno": self.apellido_paterno,
             "apellido_materno": self.apellido_materno,
             "email": self.email,
             "telefono": self.telefono,
-            "nombre_usuario": self.nombre_usuario,
-            "password": self.password
-            #"direccion": direccion.to_dict()
+            "password": self.password,
+            "colegio": self.colegio.to_dict(),
+            "direccion": self.direccion.to_dict(),
+            "sexo": self.sexo,
+            "puntaje_ingreso": self.puntaje_ingreso,
+            "curso": self.curso.to_dict(),
+            "rut": self.rut,
+            "imagen": self.imagen
         }

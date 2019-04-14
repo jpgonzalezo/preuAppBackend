@@ -13,7 +13,6 @@ class Direccion(db.EmbeddedDocument):
 
     def to_dict(self):
         return {
-            "id": str(self.id),
             "calle": self.calle,
             "numero": self.numero,
             "comuna": self.comuna

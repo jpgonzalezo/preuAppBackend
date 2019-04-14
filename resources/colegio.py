@@ -23,7 +23,11 @@ class ColegioItem(Resource):
 
 class Colegios(Resource):
     def get(self):
-        return json.loads(Colegio.objects().all().to_json())
+        response = []
+        colegios = Colegio.objects().all()
+        for colegio in colegios:
+            response.append(colegio.to_dict())
+        return response
 
     def post(self):
         data = request.data.decode()

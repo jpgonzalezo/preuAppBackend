@@ -9,3 +9,15 @@ class Administrador(gj.Document):
     nombre_usuario = db.StringField(max_length=20)
     password = db.StringField(max_length=12)
     meta = {'strict': False}
+
+    def to_dict(self):
+        return{
+            "id": str(self.id),
+            "nombres": self.nombre,
+            "apellido_paterno": self.apellido_paterno,
+            "apellido_materno": self.apellido_materno,
+            "email": self.email,
+            "telefono": self.telefono,
+            "nombre_usuario": self.nombre_usuario,
+            "password": self.password
+        }
