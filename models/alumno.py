@@ -25,6 +25,7 @@ class Alumno(gj.Document):
     puntaje_ingreso = db.IntField()
     curso = db.ReferenceField(Curso)
     imagen = db.StringField()
+    activo = db.BooleanField(default=True)
     meta = {'strict': False}
 
     def __str__(self):

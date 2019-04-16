@@ -91,7 +91,8 @@ class AlumnoItem(Resource):
         
     def delete(self, id):
         alumno = Alumno.objects(id=id).first()
-        alumno.delete()
+        alumno.activo = False
+        alumno.save()
         return{'Response':'borrado'}
 
 
@@ -100,7 +101,8 @@ class Alumnos(Resource):
         response = []
         alumnos = Alumno.objects().all()
         for alumno in alumnos:
-            response.append(alumno.to_dict())
+            if alumno.activo:
+                response.append(alumno.to_dict())
         return response
     
 
