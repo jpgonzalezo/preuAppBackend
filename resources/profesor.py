@@ -1,5 +1,8 @@
 from flask import Flask, Blueprint, jsonify, request, send_file
 from models.profesor import Profesor
+from models.direccion import Direccion
+from models.asignatura import Asignatura
+from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -12,8 +15,7 @@ def init_module(api):
     api.add_resource(Profesores, '/profesores')
     api.add_resource(ProfesorImagenItem, '/profesor_imagen/<id>')
     api.add_resource(ProfesorImagenDefault, '/profesor_imagen_default/<id>')
-
-
+    
 class ProfesorItem(Resource):
     def get(self, id):
         return json.loads(Profesor.objects(id=id).first().to_json())
@@ -32,6 +34,27 @@ class Profesores(Resource):
             if profesor.activo:
                 response.append(profesor.to_dict())
         return response
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        profesor = Profesor()
+        profesor.nombres = data['nombres']
+        profesor.apellido_paterno = data['apellido_paterno']
+        profesor.apellido_materno = data['apellido_materno']
+        profesor.telefono = data['telefono']
+        profesor.email = data['email']
+        profesor.password = data['rut']
+        profesor.rut = data['rut']
+        direccion = Direccion(calle=data['calle'],
+                              numero=data['numero'],
+                              comuna=data['comuna'])
+        profesor.direccion = direccion
+        asignatura = Asignatura.objects(id=data['asignatura']).first()
+        profesor.asignatura = asignatura.id
+        profesor.save()
+        return {'Response': 'exito',
+                'id': str(profesor.id)}
 
 class ProfesorImagenItem(Resource):
     def post(self,id):

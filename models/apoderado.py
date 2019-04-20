@@ -9,12 +9,27 @@ class Apoderado(gj.Document):
     apellido_materno = db.StringField(max_length=20)
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
-    nombre_usuario = db.StringField(max_length=20)
     password = db.StringField(max_length=12)
     direccion = db.EmbeddedDocumentField(Direccion)
     rut = db.StringField(max_length=10)
     alumno = db.ReferenceField(Alumno)
+    imagen = db.StringField()
+    activo = db.BooleanField(default=True)
     meta = {'strict': False}
 
     def __str__(self):
         return self.nombres
+    
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "nombres": self.nombres,
+            "apellido_paterno": self.apellido_paterno,
+            "apellido_materno": self.apellido_materno,
+            "email": self.email,
+            "telefono": self.telefono,
+            "direccion": self.direccion.to_dict(),
+            "rut": self.rut,
+            "alumno": self.alumno.to_dict(),
+            "imagen": self.imagen
+        }

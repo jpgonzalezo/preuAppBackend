@@ -17,7 +17,8 @@ class ColegioItem(Resource):
     
     def delete(self,id):
         colegio = Colegio.objects(id=id).first()
-        colegio.delete()
+        colegio.activo = False
+        colegio.save()
         return {'Response':'exito'}
 
 
@@ -26,7 +27,8 @@ class Colegios(Resource):
         response = []
         colegios = Colegio.objects().all()
         for colegio in colegios:
-            response.append(colegio.to_dict())
+            if colegio.activo:
+                response.append(colegio.to_dict())
         return response
 
     def post(self):

@@ -93,6 +93,9 @@ class AlumnoItem(Resource):
         alumno = Alumno.objects(id=id).first()
         alumno.activo = False
         alumno.save()
+        colegio = Colegio.objects(id= alumno.colegio.id).first()
+        colegio.updateCantEstudiantes()
+        colegio.save()
         return{'Response':'borrado'}
 
 
@@ -128,6 +131,8 @@ class Alumnos(Resource):
         alumno.colegio = colegio
         alumno.curso = curso
         alumno.save()
+        colegio.updateCantEstudiantes()
+        colegio.save()
         return {'Response': 'exito',
                 'id': str(alumno.id)}
 
