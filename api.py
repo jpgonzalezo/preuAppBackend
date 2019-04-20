@@ -23,6 +23,7 @@ def init_modules(app, api):
     from resources import profesor
     from resources import asignatura
     from resources import asistencia
+    from resources import administrador
 
     curso.init_module(api)
     alumno.init_module(api)
@@ -34,6 +35,7 @@ def init_modules(app, api):
     profesor.init_module(api)
     asignatura.init_module(api)
     asistencia.init_module(api)
+    administrador.init_module(api)
 
 
 init_modules(app, api)
