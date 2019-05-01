@@ -1,6 +1,7 @@
 from flask import Flask, Blueprint, jsonify, request, send_file
 from models.administrador import Administrador
 from models.direccion import Direccion
+from models.alerta import Alerta
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
