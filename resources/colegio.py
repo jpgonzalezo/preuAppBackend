@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request
 from models.colegio import Colegio
 from models.direccion import Direccion
 from flask_restful import Api, Resource, url_for

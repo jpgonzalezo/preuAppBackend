@@ -22,7 +22,14 @@ class Login(Resource):
             if(administrador == None):
                 return {'respuesta': 'no_existe'}
             else:
-                return {'respuesta': json.loads(administrador.to_json())}
+                return {'tipo':'ADMINISTRADOR','respuesta': json.loads(administrador.to_json())}
+
+        if(data['tipo'] == 'PROFESOR'):
+            profesor = Profesor.objects(email = data['email'], password = data['password']).first()
+            if(profesor == None):
+                return {'respuesta': 'no_existe'}
+            else:
+                return {'tipo':'PROFESOR','respuesta': json.loads(profesor.to_json())}
 
 class Logout(Resource):
     def post(self):

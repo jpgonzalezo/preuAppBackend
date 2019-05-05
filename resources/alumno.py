@@ -22,7 +22,15 @@ def init_module(api):
     api.add_resource(AlumnoHojaVida, '/hoja_vida/<id>')
     api.add_resource(AlumnoImagenItem, '/alumno_imagen/<id>')
     api.add_resource(AlumnoImagenDefault, '/alumno_imagen_default/<id>')
+    api.add_resource(AlumnosCurso, '/alumnos_curso/<id_curso>')
 
+class AlumnosCurso(Resource):
+    def get(self,id_curso):
+        alumnos = []
+        curso = Curso.objects(id=id_curso).first()
+        for alumno in Alumno.objects(curso = curso.id).all():
+            alumnos.append(alumno.to_dict())
+        return alumnos
 class AlumnoHojaVida(Resource):
     def get(self,id):
         alumno = Alumno.objects(id=id).first()
