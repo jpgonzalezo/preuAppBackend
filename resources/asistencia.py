@@ -1,5 +1,8 @@
-from flask import Flask, Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request
 from models.asistencia import Asistencia
+from models.curso import Curso
+from models.asignatura import Asignatura
+from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -56,3 +59,20 @@ class Asistencias(Resource):
         for asistencia in Asistencia.objects().all():
             response.append(asistencia.to_dict())
         return response
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        curso = Curso.objects(id = data['id_curso']).first()
+        asignatura = Asignatura.objects(id=data['id_asignatura']).first()
+        asistencia = Asistencia()
+        asistencia.curso = curso.id
+        asistencia.asignatura = asignatura.id
+        for alumno in data['presentes']:
+            alumno_aux = Alumno.objects(id=alumno['id']).first()
+            asistencia.alumnos_presentes.append(alumno_aux.id)
+        for alumno in data['ausentes']:
+            alumno_aux = Alumno.objects(id=alumno['id']).first()
+            asistencia.alumnos_ausentes.append(alumno_aux.id)
+        asistencia.save()
+        return {'Response': 'exito'}
