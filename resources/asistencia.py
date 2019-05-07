@@ -7,10 +7,10 @@ from bson import json_util
 
 def init_module(api):
     api.add_resource(AsistenciaItem, '/asistencia/<id>')
-    api.add_resource(AsistenciaCurso, '/asistencia_curso/<id>')
-    api.add_resource(AsistenciaAlumno, '/asistencia_alumno/<id>')
-    api.add_resource(AsistenciaAsignatura, '/asistencia_asignatura/<id>')
-    api.add_resource(AsistenciaFecha, '/asistencia_fecha/<fecha>')
+    api.add_resource(AsistenciaCurso, '/asistencias_curso/<id>')
+    api.add_resource(AsistenciaAlumno, '/asistencias_alumno/<id>')
+    api.add_resource(AsistenciaAsignatura, '/asistencias_asignatura/<id>')
+    api.add_resource(AsistenciaFecha, '/asistencias_fecha/<fecha>')
     api.add_resource(Asistencias, '/asistencias')
 
 
