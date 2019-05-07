@@ -15,7 +15,18 @@ def init_module(api):
     api.add_resource(Profesores, '/profesores')
     api.add_resource(ProfesorImagenItem, '/profesor_imagen/<id>')
     api.add_resource(ProfesorImagenDefault, '/profesor_imagen_default/<id>')
+    api.add_resource(ProfesoresAsignatura, '/profesores_asignatura/<id_asignatura>')
     
+
+class ProfesoresAsignatura(Resource):
+    def get(self,id_asignatura):
+        profesores = []
+        asignatura = Asignatura.objects(id=id_asignatura).first()
+        for profesor in Profesor.objects(asignatura=asignatura.id).all():
+            if profesor.activo:
+                profesores.append(profesor.to_dict())
+        return profesores
+
 class ProfesorItem(Resource):
     def get(self, id):
         return json.loads(Profesor.objects(id=id).first().to_json())

@@ -29,7 +29,8 @@ class AlumnosCurso(Resource):
         alumnos = []
         curso = Curso.objects(id=id_curso).first()
         for alumno in Alumno.objects(curso = curso.id).all():
-            alumnos.append(alumno.to_dict())
+            if alumno.activo:
+                alumnos.append(alumno.to_dict())
         return alumnos
 class AlumnoHojaVida(Resource):
     def get(self,id):

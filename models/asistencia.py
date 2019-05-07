@@ -28,5 +28,7 @@ class Asistencia(db.Document):
             "id": str(self.id),
             "asignatura" : asignatura.to_dict(),
             "alumnos_presentes" : alumnos_presentes,
-            "alumnos_ausentes" : alumnos_ausentes
+            "alumnos_ausentes" : alumnos_ausentes,
+            "curso": self.curso.to_dict(),
+            "fecha": str(self.fecha)
         }
