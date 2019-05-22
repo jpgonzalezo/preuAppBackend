@@ -8,3 +8,12 @@ class Justificacion(db.Document):
     asistencia = db.ReferenceField(Asistencia)
     alumno = db.ReferenceField(Alumno)
     causa = db.StringField(max_length=200)
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "asistencia": self.asistencia.to_dict(),
+            "alumno": self.alumno.to_dict(),
+            "causa": self.causa,
+            "fecha": str(self.fecha)
+        }

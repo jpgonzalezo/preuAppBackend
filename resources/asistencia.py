@@ -9,7 +9,7 @@ import json
 from bson import json_util
 
 def init_module(api):
-    api.add_resource(AsistenciaItem, '/asistencia/<id>')
+    api.add_resource(AsistenciaItem, '/asistencias/<id>')
     api.add_resource(AsistenciaCurso, '/asistencias_curso/<id>')
     api.add_resource(AsistenciaAlumno, '/asistencias_alumno/<id>')
     api.add_resource(AsistenciaAsignatura, '/asistencias_asignatura/<id>')
@@ -19,7 +19,7 @@ def init_module(api):
 
 class AsistenciaItem(Resource):
     def get(self, id):
-        return json.loads(Asistencia.objects(id=id).first().to_json())
+        return Asistencia.objects(id=id).first().to_dict()
 
 class AsistenciaCurso(Resource):
     def get(self, id):
