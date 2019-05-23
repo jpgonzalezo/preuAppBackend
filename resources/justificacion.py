@@ -11,6 +11,16 @@ def init_module(api):
     api.add_resource(JustificacionItem, '/justificaciones/<id>')
     api.add_resource(Justificaciones, '/justificaciones')
     api.add_resource(JustificacionesAsistencia, '/justificaciones_asistencia/<id>')
+    api.add_resource(JustificacionesAlumno, '/justificaciones_alumno/<id>')
+
+class JustificacionesAlumno(Resource):
+    def get(self,id):
+        alumno = Alumno.objects(id=id).first()
+        justificaciones = []
+        for justificacion in Justificacion.objects(alumno=alumno.id).all():
+            justificaciones.append(justificacion.to_dict())
+        return justificaciones
+
 
 class JustificacionesAsistencia(Resource):
     def get(self, id):
