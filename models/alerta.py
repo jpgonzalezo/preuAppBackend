@@ -5,7 +5,6 @@ from models.historial import Historial
 
 TIPOS_ALERTA = [
     ("RENDIMIENTO", "RENDIMIENTO"),
-    ("OBSERVACION", "OBSERVACION"),
     ("ASISTENCIA", "ASISTENCIA"),
     ]
 
@@ -16,11 +15,11 @@ class Alerta(db.Document):
     fecha = db.DateTimeField(default=datetime.now)
     historial = db.ListField(db.EmbeddedDocumentField(Historial))
 
-    def to_dict():
-    
+    def to_dict(self):
         return {
             "id": str(self.id),
             "alumno": self.alumno.to_dict(),
             "data": self.data,
-            "fecha": self.fecha
+            "fecha": str(self.fecha),
+            "tipo": self.tipo
         }
