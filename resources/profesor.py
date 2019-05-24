@@ -29,7 +29,7 @@ class ProfesoresAsignatura(Resource):
 
 class ProfesorItem(Resource):
     def get(self, id):
-        return json.loads(Profesor.objects(id=id).first().to_json())
+        return Profesor.objects(id=id).first().to_dict()
     
     def delete(self, id):
         profesor = Profesor.objects(id=id).first()
