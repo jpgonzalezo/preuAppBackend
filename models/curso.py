@@ -1,11 +1,12 @@
 from db import db
 from datetime import datetime
- 
+from models.asignatura import Asignatura 
 import mongoengine_goodjson as gj
 
 class Curso(gj.Document):
     nombre = db.StringField(verbose_name="Nombre curso", max_length=200)
     cantidad_estudiantes = db.IntField(default=0)
+    asignaturas = db.ListField(db.ReferenceField(Asignatura))    
     activo = db.BooleanField(default=True)
     meta = {'strict': False}
 
@@ -13,10 +14,17 @@ class Curso(gj.Document):
         return self.nombre
     
     def to_dict(self):
+        asignaturas = []
+        for asignatura in self.asignaturas:
+            asignatura = Asignatura.objects(id=asignatura.id).first()
+            if asignatura.activo:
+                asignaturas.append(asignatura.to_dict())
+
         return {
             "id": str(self.id),
             "nombre": self.nombre,
-            "cantidad_estudiantes": self.cantidad_estudiantes
+            "cantidad_estudiantes": self.cantidad_estudiantes,
+            "asignaturas": asignaturas
         }
 
     def updateCantEstudiantes(self):
