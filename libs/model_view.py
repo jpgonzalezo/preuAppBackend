@@ -6,7 +6,7 @@ def date_time_formatter(view, context, model, name):
     return u"%s-%s-%s" % (fecha.year, fecha.month, fecha.day)
 
 class ModelView(MV):
-    can_export = False
+    can_export = True
     column_formatters = {
         'created': date_time_formatter,
         'updated': date_time_formatter
