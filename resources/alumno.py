@@ -9,6 +9,7 @@ from models.prueba import Prueba
 from models.asignatura import Asignatura
 from models.asistencia import Asistencia
 from models.observacion import Observacion
+from models.prueba import Prueba
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -23,7 +24,119 @@ def init_module(api):
     api.add_resource(AlumnoImagenItem, '/alumno_imagen/<id>')
     api.add_resource(AlumnoImagenDefault, '/alumno_imagen_default/<id>')
     api.add_resource(AlumnosCurso, '/alumnos_curso/<id_curso>')
+    api.add_resource(AlumnoGraficoRendimiento, '/alumno_grafico_rendimiento/<id>')
+    api.add_resource(AlumnoGraficoAsistencia, '/alumno_grafico_asistencia/<id>')
 
+class AlumnoGraficoAsistencia(Resource):
+    def get(self,id):
+        labels = []
+        data_asistencia_asignatura = []
+        data_inasistencia_asignatura = []
+        data_asistencia_anual = []
+        data_inasistencia_anual = []
+        labels_anual = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+        meses = [1,2,3,4,5,6,7,8,9,10,11,12]
+        alumno = Alumno.objects(id=id).first()
+        for asignatura in alumno.curso.asignaturas:
+            labels.append(asignatura.nombre)
+            presentes = 0
+            for asistencia in Asistencia.objects(asignatura=asignatura).all():  
+                if alumno in asistencia.alumnos_presentes:
+                    presentes = presentes + 1
+            if Asistencia.objects(asignatura=asignatura).count()>0:
+                presentes = int((presentes/Asistencia.objects(asignatura=asignatura).count())*100)
+            data_asistencia_asignatura.append(presentes)
+            data_inasistencia_asignatura.append(100-presentes)
+        
+        for mes in meses:
+            asistencia_mes = 0
+            cant_asistencia = 0
+            aprobacion = 0
+            for asistencia in Asistencia.objects(curso = alumno.curso).all():
+                if str(asistencia.fecha.month) == str(mes):
+                    cant_asistencia = cant_asistencia + 1
+                    if alumno in asistencia.alumnos_presentes:
+                        asistencia_mes = asistencia_mes + 1
+            if cant_asistencia> 0:
+                aprobacion = int((asistencia_mes/cant_asistencia)*100)
+            data_asistencia_anual.append(aprobacion)
+            data_inasistencia_anual.append(100-aprobacion)
+
+        return {
+            "grafico_asignatura" : {
+                "labels" : labels,
+                "data": [
+                    {"data":data_inasistencia_asignatura, "label":"Inasistencia"},
+                    {"data":data_asistencia_asignatura, "label":"Asistencia"}
+                ]
+            },
+            "grafico_anual":{
+                "labels": labels_anual,
+                "data": [
+                    {"data":data_inasistencia_anual, "label":"Inasistencia"},
+                    {"data":data_asistencia_anual, "label":"Asistencia"}
+                ]
+            }
+        }
+class AlumnoGraficoRendimiento(Resource):
+    def get(self,id):
+        labels=[]
+        data_ensayo = []
+        data_taller = []
+        data_tarea = []
+        alumno = Alumno.objects(id=id).first()
+        for asignatura in alumno.curso.asignaturas:
+            labels.append(asignatura.nombre)
+            suma_ensayo = 0
+            suma_taller = 0
+            suma_tarea = 0
+            for prueba in Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").all():
+                puntaje = 0
+                evaluacion = Evaluacion.objects(alumno=alumno.id, prueba=prueba.id).first()
+                if evaluacion != None:
+                    puntaje = evaluacion.puntaje
+                suma_ensayo = suma_ensayo + puntaje
+            
+            for prueba in Prueba.objects(asignatura = asignatura, tipo ="TALLER").all():
+                puntaje = 0
+                evaluacion = Evaluacion.objects(alumno=alumno.id, prueba=prueba.id).first()
+                if evaluacion != None:
+                    puntaje = evaluacion.puntaje
+                suma_taller = suma_taller + puntaje
+            
+            for prueba in Prueba.objects(asignatura = asignatura, tipo ="TAREA").all():
+                puntaje = 0
+                evaluacion = Evaluacion.objects(alumno=alumno.id, prueba=prueba.id).first()
+                if evaluacion != None:
+                    puntaje = evaluacion.puntaje
+                suma_tarea = suma_tarea + puntaje
+
+            if Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()>0:
+                data_ensayo.append((suma_ensayo/Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()))
+            if Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()==0:
+                data_ensayo.append(suma_ensayo)
+
+
+            if Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()>0:
+                data_taller.append((suma_taller/Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()))
+            if Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()==0:
+                data_taller.append(suma_taller)
+
+
+            if Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()>0:
+                data_tarea.append((suma_tarea/Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()))
+            if Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()==0:
+                data_tarea.append(suma_tarea)
+
+
+        return{
+            "labels": labels,
+            "data": [
+                {"data": data_ensayo , "label":"Ensayo"},
+                {"data": data_taller , "label":"Taller"},
+                {"data": data_tarea , "label":"Tarea"}
+            ]
+        }
 class AlumnosCurso(Resource):
     def get(self,id_curso):
         alumnos = []
