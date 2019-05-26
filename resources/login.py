@@ -19,6 +19,7 @@ class Login(Resource):
         
         if(data['tipo'] == 'ADMINISTRADOR'):
             administrador = Administrador.objects(email = data['email'], password = data['password']).first()
+            print(administrador)
             if(administrador == None):
                 return {'respuesta': 'no_existe'}
             else:
