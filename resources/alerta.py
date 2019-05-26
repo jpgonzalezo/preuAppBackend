@@ -12,8 +12,16 @@ def init_module(api):
     api.add_resource(AlertaItem, '/alertas/<id>')
     api.add_resource(Alertas, '/alertas')
     api.add_resource(AlertasCurso, '/alertas_curso/<id>')
+    api.add_resource(AlertasAlumno, '/alertas_alumno/<id>')
+    
 
-
+class AlertasAlumno(Resource):
+    def get(self,id):
+        response = []
+        alumno = Alumno.objects(id=id).first()
+        for alerta in Alerta.objects(alumno=alumno.id).all():
+            response.append(alerta.to_dict())
+        return response
 class AlertaItem(Resource):
     def get(self, id):
         return Alerta.objects(id=id).first().to_dict()
