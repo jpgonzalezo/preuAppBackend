@@ -27,6 +27,8 @@ def init_modules(app, api):
     from resources import justificacion
     from resources import anotacion
     from resources import alerta
+    from resources import prueba
+    from resources import topico
 
     curso.init_module(api)
     alumno.init_module(api)
@@ -42,9 +44,10 @@ def init_modules(app, api):
     justificacion.init_module(api)
     anotacion.init_module(api)
     alerta.init_module(api)
+    prueba.init_module(api)
+    topico.init_module(api)
 
 init_modules(app, api)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

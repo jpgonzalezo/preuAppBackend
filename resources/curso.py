@@ -14,6 +14,33 @@ def init_module(api):
     api.add_resource(CursoAsignatura, '/curso_asignatura/<id_curso>/<id_asignatura>')
     api.add_resource(CursoGraficoAsistencia, '/curso_grafico_asistencia/<id>')
     api.add_resource(CursoGraficoAsignaturas, '/curso_grafico_asignaturas/<id>')
+    api.add_resource(CursoGraficoAsistenciaAsignaturas, '/curso_grafico_asistencia_asignatura/<id>')
+
+class CursoGraficoAsistenciaAsignaturas(Resource):
+    def get(self,id):
+        curso = Curso.objects(id=id).first()
+        labels = []
+        asistencia_lista = []
+        inasistencia_lista = []
+        for asignatura in curso.asignaturas:
+            labels.append(asignatura.nombre)
+            asistencia_asignatura = 0
+            aprobacion = 0
+            for asistencia in Asistencia.objects(curso=curso.id, asignatura=asignatura).all():
+                asistencia_asignatura = asistencia_asignatura + 1
+                aprobacion_asistencia = len(asistencia.alumnos_presentes) /( len(asistencia.alumnos_presentes) + len(asistencia.alumnos_ausentes))
+                aprobacion = aprobacion_asistencia + aprobacion
+            if asistencia_asignatura> 0:
+                aprobacion = int((aprobacion/asistencia_asignatura)*100)
+            asistencia_lista.append(aprobacion)
+            inasistencia_lista.append(100-aprobacion)
+        return {
+            "labels":labels,
+            "data": [
+                {"data": inasistencia_lista, "label": "Inasistencia"},
+                {"data": asistencia_lista, "label": "Asistencia"},
+            ]
+        }
 
 class CursoGraficoAsignaturas(Resource):
     def get(self,id):

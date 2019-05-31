@@ -3,6 +3,7 @@ from models.alerta import Alerta
 from models.alumno import Alumno
 from models.profesor import Profesor
 from models.curso import Curso
+from models.asignatura import Asignatura
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -13,7 +14,15 @@ def init_module(api):
     api.add_resource(Alertas, '/alertas')
     api.add_resource(AlertasCurso, '/alertas_curso/<id>')
     api.add_resource(AlertasAlumno, '/alertas_alumno/<id>')
-    
+    api.add_resource(AlertasAsignatura, '/alertas_asignatura/<id>')
+
+class AlertasAsignatura(Resource):
+    def get(self,id):
+        response = []
+        asignatura = Asignatura.objects(id=id).first()
+        for alerta in Alerta.objects(asignatura=asignatura.id).all():
+            response.append(alerta.to_dict())
+        return response
 
 class AlertasAlumno(Resource):
     def get(self,id):

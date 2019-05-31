@@ -16,7 +16,6 @@ def init_module(api):
     api.add_resource(AsistenciaFecha, '/asistencias_fecha/<fecha>')
     api.add_resource(Asistencias, '/asistencias')
 
-
 class AsistenciaItem(Resource):
     def get(self, id):
         return Asistencia.objects(id=id).first().to_dict()
@@ -40,7 +39,6 @@ class AsistenciaAsignatura(Resource):
     def get(self, id):
         response = []
         for asistencia in Asistencia.objects(asignatura=id).all():
-            print(asistencia.fecha)
             response.append(asistencia.to_dict())
         return response
 

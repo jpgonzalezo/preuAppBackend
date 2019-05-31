@@ -148,7 +148,8 @@ class AlumnosCurso(Resource):
 class AlumnoHojaVida(Resource):
     def get(self,id):
         alumno = Alumno.objects(id=id).first()
-        evaluaciones = Evaluacion.objects(alumno=alumno).all()
+        evaluaciones = Evaluacion.objects(alumno=alumno.id).all()
+        print(evaluaciones)
         evaluaciones_matematicas = []
         evaluaciones_lenguaje = []
         ponderacion_matematicas = 0
