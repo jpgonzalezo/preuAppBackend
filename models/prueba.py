@@ -5,6 +5,7 @@ from models.curso import Curso
 from models.respuesta import Respuesta
 from models.pregunta import Pregunta
 from models.asignatura import Asignatura
+from models.topico import Topico
 import mongoengine_goodjson as gj
 TIPOS_PRUEBA = [
     ("ENSAYO", "ENSAYO"),
@@ -17,6 +18,7 @@ class Prueba(gj.Document):
     asignatura = db.ReferenceField(Asignatura)
     fecha = db.DateTimeField(default=datetime.now)
     preguntas = db.ListField(db.EmbeddedDocumentField(Pregunta))
+    topicos = db.ListField(db.ReferenceField(Topico))
     tipo = db.StringField(choices=TIPOS_PRUEBA)
     activo = db.BooleanField(default=True)
     meta = {'strict': False}
@@ -25,6 +27,12 @@ class Prueba(gj.Document):
         return self.nombre
     
     def to_dict(self):
+        topicos = []
+        for topico in self.topicos:
+            topicos.append(topico.to_dict())
+        preguntas = []
+        for pregunta in self.preguntas:
+            preguntas.append(pregunta.to_dict())
         return {
             "id": str(self.id),
             "nombre": self.nombre,
@@ -32,4 +40,6 @@ class Prueba(gj.Document):
             "asignatura": self.asignatura.to_dict(),
             "fecha": str(self.fecha),
             "tipo": self.tipo,
+            "topicos": topicos,
+            "preguntas": preguntas
         }

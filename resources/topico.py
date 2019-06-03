@@ -15,7 +15,11 @@ def init_module(api):
 class TopicoItem(Resource):
     def get(self, id):
         return Topico.objects(id=id).first().to_dict()
-
+    def delete(self,id):
+        topico = Topico.objects(id=id).first()
+        topico.activo = False
+        topico.save()
+        return {"Response":"borrado"}
 class TopicosAsignatura(Resource):
     def get(self,id):
         response = []
