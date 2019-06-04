@@ -15,7 +15,34 @@ def init_module(api):
     api.add_resource(AlertasCurso, '/alertas_curso/<id>')
     api.add_resource(AlertasAlumno, '/alertas_alumno/<id>')
     api.add_resource(AlertasAsignatura, '/alertas_asignatura/<id>')
+    api.add_resource(GraficoAlertasCursos, '/alertas/grafico/cursos')
 
+class GraficoAlertasCursos(Resource):
+    def get(self):
+        labels = []
+        data_rendimiento = []
+        data_asistencia = []
+        for curso in Curso.objects().all():
+            if curso.activo:
+                labels.append(curso.nombre)
+                alertas_rendimiento = 0
+                alertas_asistencia = 0
+                for alerta in Alerta.objects().all():
+                    if alerta.alumno.curso == curso:
+                        if alerta.tipo == "RENDIMIENTO":
+                            alertas_rendimiento = alertas_rendimiento +1
+                        if alerta.tipo == "ASISTENCIA":
+                            alertas_asistencia = alertas_asistencia +1
+                data_asistencia.append(alertas_asistencia)
+                data_rendimiento.append(alertas_rendimiento)
+
+        return {
+            "labels": labels,
+            "data": [
+                {"data": data_rendimiento , "label":"Rendimiento"},
+                {"data": data_asistencia, "label": "Asistencia"}
+            ]
+        }
 class AlertasAsignatura(Resource):
     def get(self,id):
         response = []

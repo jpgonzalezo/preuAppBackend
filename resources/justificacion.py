@@ -18,7 +18,8 @@ class JustificacionesAlumno(Resource):
         alumno = Alumno.objects(id=id).first()
         justificaciones = []
         for justificacion in Justificacion.objects(alumno=alumno.id).all():
-            justificaciones.append(justificacion.to_dict())
+            if justificacion.activo:
+                justificaciones.append(justificacion.to_dict())
         return justificaciones
 
 
@@ -27,19 +28,26 @@ class JustificacionesAsistencia(Resource):
         asistencia = Asistencia.objects(id=id).first()
         justificaciones = []
         for justificacion in Justificacion.objects(asistencia=asistencia.id).all():
-            justificaciones.append(justificacion.to_dict())
+            if justificacion.activo:
+                justificaciones.append(justificacion.to_dict())
         return justificaciones
 
 class JustificacionItem(Resource):
     def get(self, id):
         return Justificacion.objects(id=id).first().to_dict()
+    def delete(self,id):
+        justificacion = Justificacion.objects(id=id).first()
+        justificacion.activo = False
+        justificacion.save()
+        return {'Response':'exito'}
 
 class Justificaciones(Resource):
     def get(self):
         response = []
         justificaciones = Justificacion.objects().all()
         for justificacion in justificaciones:
-            response.append(justificacion.to_dict())
+            if justificacion.activo:
+                response.append(justificacion.to_dict())
         return response
     
     def post(self):

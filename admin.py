@@ -25,6 +25,7 @@ from models.observacion import Observacion
 from models.asistencia import Asistencia
 from models.justificacion import Justificacion
 from models.anotacion import Anotacion
+from models.evento import Evento
 
 def create_app(config="config.cfg"):
     app = Flask(__name__)
@@ -112,6 +113,8 @@ def add_views(admin):
     admin.add_view(ModelView(Ciudad, "Ciudades",category="Direccion"))
     admin.add_view(ModelView(Region, "Regiones",category="Direccion"))
     admin.add_view(ModelView(Comuna, "Comunas",category="Direccion"))
+
+    admin.add_view(ModelView(Evento, "Eventos",category="Eventos"))
 
     admin.add_view(ModelView(Asistencia, "Asistencias", category="Asistencia y justificaciones"))
     admin.add_view(ModelView(Justificacion, "Justificaciones", category="Asistencia y justificaciones"))
