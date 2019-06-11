@@ -281,6 +281,9 @@ class AlumnoImagenItem(Resource):
 class AlumnoImagenDefault(Resource):
     def get(self,id):
         alumno = Alumno.objects(id=id).first()
-        alumno.imagen = "default"
+        imagen = Image.open("./uploads/alumnos/default_thumbnail.jpg")
+        imagen.thumbnail((800, 800))
+        imagen.save(os.path.join("./uploads/alumnos", str(id)+'_thumbnail.jpg'))
+        alumno.imagen = str(alumno.id)
         alumno.save()
         return { 'Response':'exito'}

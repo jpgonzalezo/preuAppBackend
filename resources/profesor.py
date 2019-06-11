@@ -84,6 +84,9 @@ class ProfesorImagenItem(Resource):
 class ProfesorImagenDefault(Resource):
     def get(self,id):
         profesor = Profesor.objects(id=id).first()
-        profesor.imagen = "default"
+        imagen = Image.open("./uploads/profesores/default_thumbnail.jpg")
+        imagen.thumbnail((800, 800))
+        imagen.save(os.path.join("./uploads/profesores", str(id)+'_thumbnail.jpg'))
+        profesor.imagen = str(profesor.id)
         profesor.save()
         return { 'Response':'exito'}

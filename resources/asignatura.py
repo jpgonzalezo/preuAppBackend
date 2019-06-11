@@ -12,6 +12,7 @@ from bson import json_util
 def init_module(api):
     api.add_resource(AsignaturaItem, '/asignaturas/<id>')
     api.add_resource(Asignaturas, '/asignaturas')
+    api.add_resource(AsignaturasCurso, '/asignaturas/curso/<id>')
     api.add_resource(GraficoRendimientoEvaluaciones, '/grafico/rendimiento/evaluaciones/asignatura/<id>')
     api.add_resource(GraficoRendimientoAsistencia, '/grafico/rendimiento/asistencia/asignatura/<id>')
 
@@ -82,7 +83,7 @@ class GraficoRendimientoEvaluaciones(Resource):
                         promedio = promedio / cant_evaluciones
                     promedio_taller = promedio_taller + promedio
                 if Prueba.objects(asignatura=asignatura.id, tipo="TALLER").count():
-                    promedio_taller = int(promedio_taller/Prueba.objects(asignatura=asignatura.id, tipo="ENSAYO").count())
+                    promedio_taller = int(promedio_taller/Prueba.objects(asignatura=asignatura.id, tipo="TALLER").count())
                 data_taller.append(promedio_taller)
 
                 promedio_tarea = 0
@@ -107,6 +108,15 @@ class GraficoRendimientoEvaluaciones(Resource):
                     {"data": data_taller, "label": "Talleres"},
                     {"data": data_tarea, "label": "Tareas"},
                 ]}
+
+class AsignaturasCurso(Resource):
+    def get(self,id):
+        response = []
+        curso = Curso.objects(id=id).first()
+        for asignatura in curso.asignaturas:
+            response.append(asignatura.to_dict())
+        return response
+
 class AsignaturaItem(Resource):
     def get(self, id):
         return json.loads(Asignatura.objects(id=id).first().to_json())

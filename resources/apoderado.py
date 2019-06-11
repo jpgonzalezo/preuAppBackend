@@ -77,8 +77,10 @@ class ApoderadoImagenDefault(Resource):
 
 class ApoderadoAsignarAlumno(Resource):
     def get(self,id_apoderado,id_alumno):
-        apoderado = Apoderado.objects(id=id_apoderado).first()
-        alumno = Alumno.objects(id=id_alumno).first()
-        apoderado.alumno = alumno.id
+        apoderado = Apoderado.objects(id=id).first()
+        imagen = Image.open("./uploads/apoderados/default_thumbnail.jpg")
+        imagen.thumbnail((800, 800))
+        imagen.save(os.path.join("./uploads/apoderados", str(id)+'_thumbnail.jpg'))
+        apoderado.imagen = str(apoderado.id)
         apoderado.save()
-        return {'Response':'exito'}
+        return { 'Response':'exito'}

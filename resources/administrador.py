@@ -67,6 +67,9 @@ class AdministradorImagenItem(Resource):
 class AdministradorImagenDefault(Resource):
     def get(self,id):
         administrador = Administrador.objects(id=id).first()
-        administrador.imagen = "default"
+        imagen = Image.open("./uploads/administradores/default_thumbnail.jpg")
+        imagen.thumbnail((800, 800))
+        imagen.save(os.path.join("./uploads/administradores", str(id)+'_thumbnail.jpg'))
+        administrador.imagen = str(administrador.id)
         administrador.save()
-        return { 'Response':'exito','id': str(administrador.id)}
+        return { 'Response':'exito'}
