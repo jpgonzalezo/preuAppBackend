@@ -3,6 +3,7 @@ from models.alumno import Alumno
 from models.apoderado import Apoderado
 from models.administrador import Administrador
 from models.profesor import Profesor
+from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -31,6 +32,13 @@ class Login(Resource):
                 return {'respuesta': 'no_existe'}
             else:
                 return {'tipo':'PROFESOR','respuesta': json.loads(profesor.to_json())}
+        
+        if(data['tipo'] == 'ALUMNO'):
+            alumno = Alumno.objects(email = data['email'], password = data['password']).first()
+            if(alumno == None):
+                return {'respuesta': 'no_existe'}
+            else:
+                return {'tipo':'ALUMNO','respuesta': json.loads(alumno.to_json())}
 
 class Logout(Resource):
     def post(self):
