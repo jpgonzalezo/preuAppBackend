@@ -15,6 +15,10 @@ def init_module(api):
     api.add_resource(AdministradorImagenItem, '/administrador_imagen/<id>')
     api.add_resource(AdministradorImagenDefault, '/administrador_imagen_default/<id>')
 
+def administradorEncriptacion():
+    for administrador in Administrador.objects().all():
+        administrador.encrypt_password(administrador.password)
+        administrador.save()
 class AdministradorItem(Resource):
     def get(self, id):
         return json.loads(Administrador.objects(id=id).first().to_json())

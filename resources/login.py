@@ -19,12 +19,17 @@ class Login(Resource):
         data = json.loads(data)
         
         if(data['tipo'] == 'ADMINISTRADOR'):
-            administrador = Administrador.objects(email = data['email'], password = data['password']).first()
+            administrador = Administrador.objects(email = data['email']).first()
             print(administrador)
             if(administrador == None):
                 return {'respuesta': 'no_existe'}
             else:
-                return {'tipo':'ADMINISTRADOR','respuesta': json.loads(administrador.to_json())}
+                print(data['password'])
+                print(administrador.check_password(data['password']))
+                if administrador.check_password(data['password']):
+                    return {'tipo':'ADMINISTRADOR','respuesta': json.loads(administrador.to_json())}
+                else:
+                    return {'respuesta': 'no_existe'}
 
         if(data['tipo'] == 'PROFESOR'):
             profesor = Profesor.objects(email = data['email'], password = data['password']).first()

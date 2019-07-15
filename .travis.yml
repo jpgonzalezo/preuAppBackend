@@ -1,0 +1,20 @@
+dist: trusty
+languaje: python
+python:
+  - "3.5"
+before_install:
+  - sudo apt-get install python3-pip
+install:
+  - sudo pip3 install -r requirements.txt
+  #- sudo pip install .
+script:
+  - sudo apt-get install -y python-logilab-common
+  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+  #- echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+  - sudo apt-get update
+  - sudo apt-get install -y mongodb-org
+  - sudo service mongod start
+  - export FLASK_APP=/home/travis/build/jpgonzalezo/preuAppBackend
+  - export FLASK_ENV=development
+  - cd /home/travis/build/jpgonzalezo/preuAppBackend
+  - python3 -m pytest -v

@@ -205,7 +205,8 @@ class AlumnoHojaVida(Resource):
             'ponderacion_lenguaje' : promedio_leng,
             'ponderacion_asistencia' : promedio_asistencia,
             'observaciones' : observaciones,
-            'imagen': alumno.imagen
+            'imagen': alumno.imagen,
+            'direccion': alumno.direccion.calle+" "+alumno.direccion.numero+", "+alumno.direccion.comuna
         }
 
 class AlumnoItem(Resource):
@@ -227,11 +228,9 @@ class AlumnoItem(Resource):
 
 class Alumnos(Resource):
     def get(self):
-        response = []
-        alumnos = Alumno.objects().all()
-        for alumno in alumnos:
-            if alumno.activo:
-                response.append(alumno.to_dict())
+        response = [] 
+        for alumno in Alumno.objects(activo=True).all():
+            response.append(alumno.to_dict())
         return response
     
 

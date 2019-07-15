@@ -1,5 +1,21 @@
 from db import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 import mongoengine_goodjson as gj
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
+                          BadSignature, SignatureExpired)
+from flask import (
+    Blueprint,
+    request,
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    current_app,
+    abort,
+    Response,
+    jsonify
+    )
 class Administrador(gj.Document):
     nombres = db.StringField()
     rut = db.StringField()
@@ -7,7 +23,7 @@ class Administrador(gj.Document):
     apellido_materno = db.StringField(max_length=20)
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
-    password = db.StringField(max_length=12)
+    password = db.StringField()
     activo = db.BooleanField(default=True)
     imagen = db.StringField()
     meta = {'strict': False}
@@ -23,3 +39,12 @@ class Administrador(gj.Document):
             "rut": self.rut,
             "imagen": self.imagen
         }
+    
+    def encrypt_password(self, password_to_encrypt):
+    	self.password = generate_password_hash(password_to_encrypt)
+
+    def check_password(self, password_to_check):
+        print("entre al check")
+        print(self.password)
+        print(password_to_check.strip())
+        return check_password_hash(self.password, str(password_to_check))
