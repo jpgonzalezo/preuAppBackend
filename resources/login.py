@@ -20,8 +20,6 @@ class Login(Resource):
         
         if(data['tipo'] == 'ADMINISTRADOR'):
             administrador = Administrador.objects(email = data['email']).first()
-            administrador.encrypt_password(administrador.password)
-            administrador.save()
             if(administrador == None):
                 return {'respuesta': 'no_existe'}
             else:
