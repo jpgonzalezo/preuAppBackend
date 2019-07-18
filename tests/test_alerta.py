@@ -8,8 +8,6 @@ import os
 import api
 from models.alerta import Alerta
 
-
-
 @pytest.fixture
 def client():
     db_fd, api.app.config['MONGO_DBNAME'] = tempfile.mkstemp()
