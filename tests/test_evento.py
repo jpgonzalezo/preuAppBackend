@@ -21,7 +21,7 @@ def client():
     os.close(db_fd)
     os.unlink(api.app.config['MONGO_DBNAME'])
 
-def test_get_evaluacion(client):
+def test_get_evento(client):
     evento = Evento.objects().first()
     if evento == None:
         assert True
@@ -32,7 +32,7 @@ def test_get_evaluacion(client):
         else:
             assert False
 
-def test_get_evaluaciones(client):
+def test_get_eventos(client):
     rv = client.get('/eventos')
     if rv._status_code == 200:
         assert True
