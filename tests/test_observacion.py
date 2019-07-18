@@ -21,7 +21,7 @@ def client():
     os.close(db_fd)
     os.unlink(api.app.config['MONGO_DBNAME'])
 
-def test_get_alerta(client):
+def test_get_observacion(client):
     observacion = Observacion.objects().first()
     if observacion == None:
         assert True
@@ -32,7 +32,7 @@ def test_get_alerta(client):
         else:
             assert False
 
-def test_get_alertas(client):
+def test_get_observaciones(client):
     rv = client.get('/observaciones')
     if rv._status_code == 200:
         assert True

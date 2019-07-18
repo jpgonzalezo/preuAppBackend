@@ -21,7 +21,7 @@ def client():
     os.close(db_fd)
     os.unlink(api.app.config['MONGO_DBNAME'])
 
-def test_get_profesor(client):
+def test_get_prueba(client):
     prueba = Prueba.objects().first()
     if prueba == None:
         assert True
@@ -32,7 +32,7 @@ def test_get_profesor(client):
         else:
             assert False
 
-def test_get_profesores(client):
+def test_get_pruebas(client):
     rv = client.get('/pruebas')
     if rv._status_code == 200:
         assert True
