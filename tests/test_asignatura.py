@@ -6,7 +6,7 @@ from io import BytesIO
 from os.path import dirname, abspath
 import os
 import api
-from models.alumno import Alumno
+from models.asignatura import Asignatura
 
 
 
@@ -21,19 +21,19 @@ def client():
     os.close(db_fd)
     os.unlink(api.app.config['MONGO_DBNAME'])
 
-def test_get_alumno(client):
-    alumno = Alumno.objects().first()
-    if alumno == None:
+def test_get_alerta(client):
+    asignatura = Asignatura.objects().first()
+    if asignatura == None:
         assert True
     else:
-        rv = client.get('/alumno/'+str(alumno.id))
+        rv = client.get('/asignaturas/'+str(asignatura.id))
         if rv._status_code == 200:
             assert True
         else:
             assert False
 
-def test_get_alumnos(client):
-    rv = client.get('/alumnos')
+def test_get_alertas(client):
+    rv = client.get('/asignaturas')
     if rv._status_code == 200:
         assert True
     else:
