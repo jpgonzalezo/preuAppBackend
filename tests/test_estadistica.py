@@ -6,8 +6,6 @@ from io import BytesIO
 from os.path import dirname, abspath
 import os
 import api
-from models.estadistica import Estadistica
-
 
 
 @pytest.fixture
