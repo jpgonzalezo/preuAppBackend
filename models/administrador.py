@@ -46,7 +46,16 @@ class Administrador(gj.Document):
     def check_password(self, password_to_check):
         print(check_password_hash(self.password, str(password_to_check)))
         return check_password_hash(self.password, str(password_to_check))
-    
+    @classmethod
+    def get_by_email_or_username(cls, email_or_usernmane):
+        text_id = email_or_usernmane.lower()
+        if '@' in text_id:
+            return cls.objects.filter(email=text_id).first()
+        return cls.objects.filter(username=text_id).first()
+
+    @classmethod
+    def get_by_id(cls, user_id):
+        return cls.objects(id=user_id).first()
     # token alive 10 hours
     def get_token(self, seconds_live=36000):
         token = Serializer(current_app.config.get("TOKEN_KEY"),
