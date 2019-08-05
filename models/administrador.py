@@ -44,7 +44,27 @@ class Administrador(gj.Document):
     	self.password = generate_password_hash(password_to_encrypt)
 
     def check_password(self, password_to_check):
-        print("entre al check")
-        print(self.password)
-        print(password_to_check.strip())
+        print(check_password_hash(self.password, str(password_to_check)))
         return check_password_hash(self.password, str(password_to_check))
+    
+    # token alive 10 hours
+    def get_token(self, seconds_live=36000):
+        token = Serializer(current_app.config.get("TOKEN_KEY"),
+                           expires_in=seconds_live)
+        return str(token.dumps({'id': str(self.id)}))
+
+    @classmethod
+    def load_from_token(cls, token):
+        s = Serializer(current_app.config.get("TOKEN_KEY"))
+        if token[0:2] == "b'" and token[-1:] == "'":
+            token = token[2:-1]
+        try:
+            data = s.loads(token)
+            return cls.get_by_id(data['id'])
+        except SignatureExpired:
+            # the token has ben expired
+            return None
+        except BadSignature:
+            # the token ist'n valid
+            return None
+        return None

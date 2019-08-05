@@ -3,7 +3,23 @@ from datetime import datetime
 from models.direccion import Direccion
 from models.colegio import Colegio
 from models.curso import Curso
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 import mongoengine_goodjson as gj
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
+                          BadSignature, SignatureExpired)
+from flask import (
+    Blueprint,
+    request,
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    current_app,
+    abort,
+    Response,
+    jsonify
+    )
 
 TIPOS_SEXOS = [
     ("MASCULINO", "MASCULINO"),
@@ -48,3 +64,32 @@ class Alumno(gj.Document):
             "rut": self.rut,
             "imagen": self.imagen
         }
+    
+    def encrypt_password(self, password_to_encrypt):
+    	self.password = generate_password_hash(password_to_encrypt)
+
+    def check_password(self, password_to_check):
+        print(check_password_hash(self.password, str(password_to_check)))
+        return check_password_hash(self.password, str(password_to_check))
+    
+    # token alive 10 hours
+    def get_token(self, seconds_live=36000):
+        token = Serializer(current_app.config.get("TOKEN_KEY"),
+                           expires_in=seconds_live)
+        return str(token.dumps({'id': str(self.id)}))
+
+    @classmethod
+    def load_from_token(cls, token):
+        s = Serializer(current_app.config.get("TOKEN_KEY"))
+        if token[0:2] == "b'" and token[-1:] == "'":
+            token = token[2:-1]
+        try:
+            data = s.loads(token)
+            return cls.get_by_id(data['id'])
+        except SignatureExpired:
+            # the token has ben expired
+            return None
+        except BadSignature:
+            # the token ist'n valid
+            return None
+        return None
