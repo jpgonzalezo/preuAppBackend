@@ -3,11 +3,14 @@ from models.profesor import Profesor
 from models.direccion import Direccion
 from models.asignatura import Asignatura
 from models.alumno import Alumno
+from models.administrador import Administrador
+from models.apoderado import Apoderado
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
 from bson import json_util
 from PIL import Image
+from flask_restful import reqparse
 import os
 
 def init_module(api):
@@ -19,26 +22,70 @@ def init_module(api):
     
 
 class ProfesoresAsignatura(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ProfesoresAsignatura, self).__init__()
     def get(self,id_asignatura):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         profesores = []
         asignatura = Asignatura.objects(id=id_asignatura).first()
-        for profesor in Profesor.objects(asignatura=asignatura.id).all():
+        for profesor in Profesor.objects(asignatura=asignatura.id, activo=True).all():
             if profesor.activo:
                 profesores.append(profesor.to_dict())
         return profesores
 
 class ProfesorItem(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ProfesorItem, self).__init__()
     def get(self, id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         return Profesor.objects(id=id).first().to_dict()
     
     def delete(self, id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         profesor = Profesor.objects(id=id).first()
         profesor.activo = False
         profesor.save()
         return{'Response':'borrado'}
 
 class Profesores(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(Profesores, self).__init__()
     def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         profesores = Profesor.objects().all()
         response = []
         for profesor in profesores:
@@ -47,6 +94,14 @@ class Profesores(Resource):
         return response
     
     def post(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         data = request.data.decode()
         data = json.loads(data)
         profesor = Profesor()
@@ -68,7 +123,19 @@ class Profesores(Resource):
                 'id': str(profesor.id)}
 
 class ProfesorImagenItem(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ProfesorImagenItem, self).__init__()
     def post(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         profesor = Profesor.open(request.files['imagen'].stream).convert("RGB")
         profesor.save(os.path.join("./uploads/profesores", str(id)+".jpg"))
         profesor.thumbnail((800, 800))
@@ -79,10 +146,30 @@ class ProfesorImagenItem(Resource):
         return {'Response': 'exito'}
     
     def get(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         return send_file('uploads/profesores/'+id+'_thumbnail.jpg')
 
 class ProfesorImagenDefault(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ProfesorImagenDefault, self).__init__()
     def get(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
         profesor = Profesor.objects(id=id).first()
         imagen = Image.open("./uploads/profesores/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))
