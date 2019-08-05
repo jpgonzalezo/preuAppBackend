@@ -6,10 +6,12 @@ from models.asignatura import Asignatura
 import json
 
 app = Flask(__name__)
+app.config.from_pyfile('config.cfg')
 CORS(app)
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
 app.register_blueprint(api_bp)
+
 
 
 def init_modules(app, api):
