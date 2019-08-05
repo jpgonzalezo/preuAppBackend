@@ -100,19 +100,7 @@ class Administradores(Resource):
                 'id': str(administrador.id)}
 
 class AdministradorImagenItem(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
-        super(AdministradorImagenItem, self).__init__()
     def post(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         imagen = Image.open(request.files['imagen'].stream).convert("RGB")
         imagen.save(os.path.join("./uploads/administradores", str(id)+".jpg"))
         imagen.thumbnail((800, 800))
@@ -123,30 +111,10 @@ class AdministradorImagenItem(Resource):
         return {'Response': 'exito','id': str(administrador.id)}
     
     def get(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         return send_file('./uploads/administradores/'+id+'_thumbnail.jpg')
 
 class AdministradorImagenDefault(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
-        super(AdministradorImagenDefault, self).__init__()
     def get(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         administrador = Administrador.objects(id=id).first()
         imagen = Image.open("./uploads/administradores/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))

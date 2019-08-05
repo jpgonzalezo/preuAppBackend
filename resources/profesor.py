@@ -123,19 +123,7 @@ class Profesores(Resource):
                 'id': str(profesor.id)}
 
 class ProfesorImagenItem(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
-        super(ProfesorImagenItem, self).__init__()
     def post(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         profesor = Profesor.open(request.files['imagen'].stream).convert("RGB")
         profesor.save(os.path.join("./uploads/profesores", str(id)+".jpg"))
         profesor.thumbnail((800, 800))
@@ -146,30 +134,10 @@ class ProfesorImagenItem(Resource):
         return {'Response': 'exito'}
     
     def get(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         return send_file('uploads/profesores/'+id+'_thumbnail.jpg')
 
 class ProfesorImagenDefault(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
-        super(ProfesorImagenDefault, self).__init__()
     def get(self,id):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         profesor = Profesor.objects(id=id).first()
         imagen = Image.open("./uploads/profesores/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))

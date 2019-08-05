@@ -135,19 +135,8 @@ class CursoGraficoAsistencia(Resource):
             ]
         }
 class CursoAsignatura(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
-        super(CursoAsignatura, self).__init__()
+    
     def put(self,id_curso,id_asignatura):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         asignatura = Asignatura.objects(id=id_asignatura).first()
         curso = Curso.objects(id=id_curso).first()
         curso.asignaturas.append(asignatura.id)
@@ -155,14 +144,6 @@ class CursoAsignatura(Resource):
         return { 'Response': "exito"}
 
     def delete(self,id_curso,id_asignatura):
-        args = self.reqparse.parse_args()
-        token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
-        administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
-            return {'response': 'user_invalid'},401
         asignatura = Asignatura.objects(id=id_asignatura).first()
         curso = Curso.objects(id=id_curso).first()
         curso.asignaturas.remove(asignatura)
