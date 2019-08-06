@@ -110,7 +110,7 @@ class Profesores(Resource):
         profesor.apellido_materno = data['apellido_materno']
         profesor.telefono = data['telefono']
         profesor.email = data['email']
-        profesor.password = data['rut']
+        profesor.encrypt_password(data['rut'])
         profesor.rut = data['rut']
         direccion = Direccion(calle=data['calle'],
                               numero=data['numero'],

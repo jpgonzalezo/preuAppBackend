@@ -87,7 +87,7 @@ class Apoderados(Resource):
         apoderado.apellido_materno = data['apellido_materno']
         apoderado.telefono = data['telefono']
         apoderado.email = data['email']
-        apoderado.password = data['rut']
+        apoderado.encrypt_password(data['rut'])
         apoderado.rut = data['rut']
         direccion = Direccion(calle=data['calle'],
                               numero=data['numero'],
