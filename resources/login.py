@@ -24,13 +24,9 @@ class Login(Resource):
                 return {'respuesta': 'no_existe'}
             else:
                 if administrador.check_password(data['password']):
-                    print("antes de generar token")
                     token = administrador.get_token()
-                    print("el token es")
-                    print(token)
                     return {'tipo': 'ADMINISTRADOR','token': str(token)}
                 else:
-                    print("usuario no valido")
                     return {'respuesta': 'no_existe'}
 
         if(data['tipo'] == 'PROFESOR'):

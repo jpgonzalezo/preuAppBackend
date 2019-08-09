@@ -26,7 +26,7 @@ class Profesor(gj.Document):
     apellido_materno = db.StringField(max_length=20)
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
-    password = db.StringField(max_length=12)
+    password = db.StringField()
     direccion = db.EmbeddedDocumentField(Direccion)
     rut = db.StringField(max_length=10)
     asignatura = db.ReferenceField(Asignatura)
