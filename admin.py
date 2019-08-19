@@ -15,6 +15,7 @@ from models.alumno import Alumno
 from models.apoderado import Apoderado
 from models.evaluacion import Evaluacion
 from models.administrador import Administrador
+from models.direccion import Direccion
 from models.region import Region
 from models.ciudad import Ciudad 
 from models.comuna import Comuna
@@ -80,14 +81,68 @@ class ViewWithMethodViews(BaseView):
         sheet = wb.sheets()[0]
         filas_importadas = 0
         for row in range(1, sheet.nrows):
-            nombres = str(sheet.cell(row, 0).value)
-            apel_pa = str(sheet.cell(row, 1).value)
-            apel_ma = str(sheet.cell(row, 2).value)
-            email   = str(sheet.cell(row, 3).value)
-            telefono = str(sheet.cell(row, 2).value)
-            if not '@' in email:
-                return "Error en fila %d, el email no es valido" % (row + 1)
-            filas_importadas += 1
+            rut = str(sheet.cell(row, 0).value)
+            if Alumno.objects(rut=rut).first() == None:
+                nombres = str(sheet.cell(row, 1).value)
+                apel_pa = str(sheet.cell(row, 2).value)
+                apel_ma = str(sheet.cell(row, 3).value)
+                sexo = str(sheet.cell(row, 4).value)
+                email   = str(sheet.cell(row, 5).value)
+                telefono = str(sheet.cell(row, 6).value)
+                calle = str(sheet.cell(row, 7).value)
+                numero = str(sheet.cell(row, 8).value)
+                comuna = str(sheet.cell(row, 9).value)
+                curso = str(sheet.cell(row, 10).value)
+                colegio = str(sheet.cell(row, 11).value)
+                colegio_calle = str(sheet.cell(row, 12).value)
+                colegio_numero = str(sheet.cell(row, 13).value)
+                colegio_comuna = str(sheet.cell(row, 14).value)
+                alumno = Alumno()
+                alumno.rut = rut
+                alumno.encrypt_password(rut)
+                alumno.nombres = nombres
+                alumno.apellido_paterno = apel_pa
+                alumno.apellido_materno = apel_ma
+                if sexo == 'M':
+                    alumno.sexo = 'MASCULINO'
+                if sexo == 'F':
+                    alumno.sexo = 'FEMENINO'
+                if curso == 'C':
+                    ciencias = Curso.objects(nombre="Ciencias 2019").first()
+                    if ciencias != None:
+                        alumno.curso = ciencias.id
+                if curso == 'H':
+                    historia = Curso.objects(nombre="Historia 2019").first()
+                    if historia != None:
+                        alumno.curso = historia.id
+                alumno.email = email
+                alumno.telefono = telefono
+                direccion = Direccion()
+                direccion.calle = calle
+                direccion.numero = numero
+                direccion.comuna = comuna
+                alumno.direccion = direccion
+                colegio_alumno = Colegio.objects(nombre = colegio).first()
+                if colegio_alumno != None:
+                    alumno.colegio = colegio_alumno.id
+                else:
+                    colegio_alumno = Colegio()
+                    colegio_alumno.nombre = colegio
+                    direccion = Direccion()
+                    direccion.calle = colegio_calle
+                    direccion.numero = colegio_numero
+                    direccion.comuna = colegio_comuna
+                    colegio_alumno.direccion = direccion
+                    colegio_alumno.save()
+                    alumno.colegio = colegio_alumno.id
+                alumno.imagen = "default"
+                alumno.puntaje_ingreso = 500
+                alumno.save()
+                filas_importadas += 1
+        for colegio in Colegio.objects().all():
+            colegio.updateCantEstudiantes()
+        for curso in Curso.objects().all():
+            curso.updateCantEstudiantes()
         return "%d Fila importadas" % filas_importadas
 
 
