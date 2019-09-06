@@ -107,3 +107,18 @@ class Topicos(Resource):
             if topico.activo:
                 response.append(topico.to_dict())
         return response
+    
+    def post(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        topico = Topico()
+        topico.nombre = data['nombre']
+        topico.asignatura = profesor.asignatura.id
+        topico.save()
+        return {'Response':'exito'}
+
