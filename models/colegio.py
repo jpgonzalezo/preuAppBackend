@@ -24,7 +24,7 @@ class Colegio(gj.Document):
     
     def updateCantEstudiantes(self):
         from models.alumno import Alumno
-        alumnos = Alumno.objects(colegio=self).all()
+        alumnos = Alumno.objects(colegio=self.id).all()
         contador = 0
         for alumno in alumnos:
             if alumno.activo:
