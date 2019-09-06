@@ -23,6 +23,15 @@ class Prueba(gj.Document):
     activo = db.BooleanField(default=True)
     meta = {'strict': False}
 
+    def getFecha(self):
+        mes = str(self.fecha.month)
+        dia = str(self.fecha.day)
+        if len(str(self.fecha.month)) is 1:
+            mes = "0"+str(self.fecha.month)
+        if len(str(self.fecha.day)) is 1:
+            dia = "0"+str(self.fecha.day)
+        return str(self.fecha.year)+"-"+mes+"-"+dia+" "+str(self.fecha.hour)+":"+str(self.fecha.minute)+":"+str(self.fecha.second)
+
     def __str__(self):
         return self.nombre
     
@@ -38,7 +47,7 @@ class Prueba(gj.Document):
             "nombre": self.nombre,
             "cantidad_preguntas": self.cantidad_preguntas,
             "asignatura": self.asignatura.to_dict(),
-            "fecha": str(self.fecha),
+            "fecha": self.getFecha(),
             "tipo": self.tipo,
             "topicos": topicos,
             "preguntas": preguntas

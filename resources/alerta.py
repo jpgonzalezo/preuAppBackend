@@ -18,6 +18,7 @@ def init_module(api):
     api.add_resource(AlertasCurso, '/alertas_curso/<id>')
     api.add_resource(AlertasAlumno, '/alertas_alumno/<id>')
     api.add_resource(AlertasAsignatura, '/alertas_asignatura/<id>')
+    api.add_resource(AlertasAsignaturaToken, '/alertas/asignatura')
     api.add_resource(GraficoAlertasCursos, '/alertas/grafico/cursos')
 
 class GraficoAlertasCursos(Resource):
@@ -59,6 +60,26 @@ class GraficoAlertasCursos(Resource):
                 {"data": data_asistencia, "label": "Asistencia"}
             ]
         }
+
+class AlertasAsignaturaToken(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(AlertasAsignaturaToken, self).__init__()
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        response = []
+        asignatura = Asignatura.objects(id=profesor.asignatura.id).first()
+        for alerta in Alerta.objects(asignatura=asignatura.id).all():
+            response.append(alerta.to_dict())
+        return response
 class AlertasAsignatura(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()

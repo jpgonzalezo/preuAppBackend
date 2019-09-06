@@ -14,6 +14,7 @@ from flask_restful import reqparse
 def init_module(api):
     api.add_resource(EvaluacionesPrueba, '/evaluaciones/prueba/<id>')
 
+
 class EvaluacionesPrueba(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()

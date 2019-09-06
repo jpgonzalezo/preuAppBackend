@@ -15,7 +15,7 @@ def init_module(api):
     api.add_resource(TopicoItem, '/topicos/<id>')
     api.add_resource(Topicos, '/topicos')
     api.add_resource(TopicosAsignatura, '/topicos_asignatura/<id>')
-
+    api.add_resource(TopicosAsignaturaToken, '/topicos/asignatura')
 
 class TopicoItem(Resource):
     def __init__(self):
@@ -45,6 +45,28 @@ class TopicoItem(Resource):
         topico.activo = False
         topico.save()
         return {"Response":"borrado"}
+
+class TopicosAsignaturaToken(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(TopicosAsignaturaToken, self).__init__()
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        response = []
+        asignatura = Asignatura.objects(id=profesor.asignatura.id).first()
+        for topico in Topico.objects(asignatura=asignatura.id).all():
+            if topico.activo:
+                response.append(topico.to_dict())
+        return response
+
 class TopicosAsignatura(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()

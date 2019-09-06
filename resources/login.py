@@ -30,11 +30,15 @@ class Login(Resource):
                     return {'respuesta': 'no_existe'}
 
         if(data['tipo'] == 'PROFESOR'):
-            profesor = Profesor.objects(email = data['email'], password = data['password']).first()
+            profesor = Profesor.objects(email = data['email']).first()
             if(profesor == None):
                 return {'respuesta': 'no_existe'}
             else:
-                return {'tipo':'PROFESOR','respuesta': json.loads(profesor.to_json())}
+                if profesor.check_password(data['password']):
+                    token = profesor.get_token()
+                    return {'tipo': 'PROFESOR','token': str(token)}
+                else:
+                    return {'respuesta': 'no_existe'}
         
         if(data['tipo'] == 'ALUMNO'):
             alumno = Alumno.objects(email = data['email'], password = data['password']).first()

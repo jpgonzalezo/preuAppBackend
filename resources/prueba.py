@@ -17,6 +17,7 @@ def init_module(api):
     api.add_resource(PruebaItem, '/pruebas/<id>')
     api.add_resource(Pruebas, '/pruebas')
     api.add_resource(PruebasAsignatura, '/pruebas_asignatura/<id>')
+    api.add_resource(PruebasAsignaturaToken, '/pruebas/asignatura')
     api.add_resource(GraficoRendimientoPreguntas, '/grafico/rendimiento/preguntas/<id>')
     api.add_resource(GraficoRendimientoTopicos, '/grafico/rendimiento/topicos/<id>')
     api.add_resource(GraficoRendimientoCursos, '/grafico/rendimiento/cursos/<id>')
@@ -147,6 +148,27 @@ class GraficoRendimientoPreguntas(Resource):
             "labels":labels,
             "data": data
         }
+
+class PruebasAsignaturaToken(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebasAsignaturaToken, self).__init__()
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        response = []
+        asignatura = Asignatura.objects(id=profesor.asignatura.id).first()
+        for prueba in Prueba.objects(asignatura=asignatura.id ,activo=True):
+            response.append(prueba.to_dict())
+        return response
+    
 class PruebasAsignatura(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
@@ -163,7 +185,7 @@ class PruebasAsignatura(Resource):
             return {'response': 'user_invalid'},401
         response = []
         asignatura = Asignatura.objects(id=id).first()
-        for prueba in Prueba.objects(asignatura=asignatura.id):
+        for prueba in Prueba.objects(asignatura=asignatura.id,activo=True):
             response.append(prueba.to_dict())
         return response
 class PruebaItem(Resource):
@@ -181,6 +203,17 @@ class PruebaItem(Resource):
         if alumno == None and apoderado == None and administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         return Prueba.objects(id=id).first().to_dict()
+    
+    def delete(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        prueba = Prueba.objects(id=id).first()
+        prueba.activo = False
+        prueba.save()
+        return {'Response':'borrado'}
 
 class Pruebas(Resource):
     def __init__(self):
@@ -202,3 +235,18 @@ class Pruebas(Resource):
             if prueba.activo:
                 response.append(prueba.to_dict())
         return response
+    def post(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        prueba = Prueba()
+        prueba.nombre = data['nombre']
+        prueba.cantidad_preguntas = 0
+        prueba.asignatura = profesor.asignatura.id
+        prueba.tipo = data['tipo']
+        prueba.save()
+        return {"Response":"exito"}

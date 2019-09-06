@@ -19,7 +19,30 @@ def init_module(api):
     api.add_resource(ProfesorImagenItem, '/profesor_imagen/<id>')
     api.add_resource(ProfesorImagenDefault, '/profesor_imagen_default/<id>')
     api.add_resource(ProfesoresAsignatura, '/profesores_asignatura/<id_asignatura>')
+    api.add_resource(ProfesoresAsignaturaToken, '/profesores/asignatura')
     
+
+class ProfesoresAsignaturaToken(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ProfesoresAsignaturaToken, self).__init__()
+
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        profesores = []
+        asignatura = Asignatura.objects(id=profesor.asignatura.id).first()
+        for profesor in Profesor.objects(asignatura=asignatura.id, activo=True).all():
+            if profesor.activo:
+                profesores.append(profesor.to_dict())
+        return profesores
 
 class ProfesoresAsignatura(Resource):
     def __init__(self):
