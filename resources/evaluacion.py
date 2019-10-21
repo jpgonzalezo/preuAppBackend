@@ -38,32 +38,58 @@ class EvaluacionRegistroAlternativas(Resource):
         cantidad_omitidas = 0
         for respuesta in evaluacion.respuestas:
             for registro in data['data']:
-                if registro[str(respuesta.numero_pregunta)].upper() == respuesta.alternativa.upper():
-                    for pregunta in evaluacion.prueba.preguntas:
-                        if pregunta.numero_pregunta == respuesta.numero_pregunta:
-                            if respuesta.alternativa == "":
-                                cantidad_omitidas = cantidad_omitidas + 1
-                            else:
-                                if pregunta.alternativa.upper() == respuesta.alternativa.upper():
-                                    cantidad_buenas = cantidad_buenas + 1
-                                else:
-                                    cantidad_malas = cantidad_malas + 1
-                else:
-                    if str(registro[str(respuesta.numero_pregunta)].upper()) == "" or str(registro[str(respuesta.numero_pregunta)].upper()) == "O":
-                        respuesta.alternativa = "O"
+                #SI LA EVALUACION EDITADA ES DE TIPO TAREA
+                if evaluacion.prueba.tipo == "TAREA":
+                    #SI EL REGISTRO DE LA PREGUNTA ES IGUAL AL ORIGINAL
+                    if (
+                        registro[str(respuesta.numero_pregunta)].upper() == "CORRECTA" and 
+                        respuesta.correcta
+                        ) or (
+                        registro[str(respuesta.numero_pregunta)].upper() == "INCORRECTA" and not(respuesta.correcta)
+                        ):
+                        if respuesta.correcta:
+                           cantidad_buenas = cantidad_buenas + 1
+                        else:
+                            cantidad_malas = cantidad_malas + 1
+                    #SI CAMBIO EL REGISTRO
                     else:
-                        respuesta.alternativa = str(registro[str(respuesta.numero_pregunta)].upper())
-                    for pregunta in evaluacion.prueba.preguntas:
-                        if pregunta.numero_pregunta == respuesta.numero_pregunta:
-                            if respuesta.alternativa == "" or respuesta.alternativa == "O":
-                                cantidad_omitidas = cantidad_omitidas + 1
-                            else:
-                                if pregunta.alternativa.upper() == respuesta.alternativa.upper():
-                                    respuesta.correcta = True
-                                    cantidad_buenas = cantidad_buenas + 1
+                        if respuesta.correcta:
+                            respuesta.alternativa = "incorrecta"
+                            respuesta.correcta = False
+                            cantidad_malas = cantidad_malas + 1
+                        else:
+                            respuesta.alternativa = "correcta"
+                            respuesta.correcta = True
+                            cantidad_buenas = cantidad_buenas + 1
+
+                #SI LA EVALUACION EDITADA ES DE TIPO ENSAYO O TALLER
+                else:
+                    if registro[str(respuesta.numero_pregunta)].upper() == respuesta.alternativa.upper():
+                        for pregunta in evaluacion.prueba.preguntas:
+                            if pregunta.numero_pregunta == respuesta.numero_pregunta:
+                                if respuesta.alternativa == "":
+                                    cantidad_omitidas = cantidad_omitidas + 1
                                 else:
-                                    respuesta.correcta = False
-                                    cantidad_malas = cantidad_malas + 1
+                                    if pregunta.alternativa.upper() == respuesta.alternativa.upper():
+                                        cantidad_buenas = cantidad_buenas + 1
+                                    else:
+                                        cantidad_malas = cantidad_malas + 1
+                    else:
+                        if str(registro[str(respuesta.numero_pregunta)].upper()) == "" or str(registro[str(respuesta.numero_pregunta)].upper()) == "O":
+                            respuesta.alternativa = "O"
+                        else:
+                            respuesta.alternativa = str(registro[str(respuesta.numero_pregunta)].upper())
+                        for pregunta in evaluacion.prueba.preguntas:
+                            if pregunta.numero_pregunta == respuesta.numero_pregunta:
+                                if respuesta.alternativa == "" or respuesta.alternativa == "O":
+                                    cantidad_omitidas = cantidad_omitidas + 1
+                                else:
+                                    if pregunta.alternativa.upper() == respuesta.alternativa.upper():
+                                        respuesta.correcta = True
+                                        cantidad_buenas = cantidad_buenas + 1
+                                    else:
+                                        respuesta.correcta = False
+                                        cantidad_malas = cantidad_malas + 1
         
         evaluacion.cantidad_buenas = cantidad_buenas
         evaluacion.cantidad_malas = cantidad_malas
@@ -96,10 +122,16 @@ class EvaluacionRegistroFilas(Resource):
         rowsData.append({ 'id':str(evaluacion.alumno.id),'nombres': evaluacion.alumno.nombres, 'apellido_paterno': evaluacion.alumno.apellido_paterno, 'apellido_materno': evaluacion.alumno.apellido_materno})
         for row in rowsData:
             for respuesta in evaluacion.respuestas:
-                if respuesta.alternativa == "O":
-                    row[str(respuesta.numero_pregunta)] = ""
+                if evaluacion.prueba.tipo != "TAREA":
+                    if respuesta.alternativa == "O":
+                        row[str(respuesta.numero_pregunta)] = ""
+                    else:
+                        row[str(respuesta.numero_pregunta)] = respuesta.alternativa
                 else:
-                    row[str(respuesta.numero_pregunta)] = respuesta.alternativa
+                    if respuesta.correcta:
+                        row[str(respuesta.numero_pregunta)] = "correcta"
+                    else:
+                        row[str(respuesta.numero_pregunta)] = "incorrecta"
         return rowsData
 
 class EvaluacionPuntaje(Resource):
