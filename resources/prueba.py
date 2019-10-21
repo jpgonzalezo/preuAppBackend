@@ -62,16 +62,26 @@ class PruebaRegistrarEvaluaciones(Resource):
                 if registro[str(pregunta.numero_pregunta)] == "":
                     cantidad_omitidas = cantidad_omitidas + 1
                     respuesta.correcta = False
-                    respuesta.alternativa = "O"
+                    if prueba.tipo != "TAREA":
+                        respuesta.alternativa = "O"
                 else:
-                    if registro[str(pregunta.numero_pregunta)].upper() == pregunta.alternativa.upper():
-                        cantidad_buenas = cantidad_buenas + 1
-                        respuesta.correcta = True
-                        respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
+                    if prueba.tipo != "TAREA":
+                        if registro[str(pregunta.numero_pregunta)].upper() == pregunta.alternativa.upper():
+                            cantidad_buenas = cantidad_buenas + 1
+                            respuesta.correcta = True
+                            respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
+                        else:
+                            cantidad_malas = cantidad_malas + 1
+                            respuesta.correcta = False
+                            respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
                     else:
-                        cantidad_malas = cantidad_malas + 1
-                        respuesta.correcta = False
-                        respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
+                        if registro[str(pregunta.numero_pregunta)].upper() == "CORRECTA":
+                            cantidad_buenas = cantidad_buenas + 1
+                            respuesta.correcta = True
+
+                        if registro[str(pregunta.numero_pregunta)].upper() == "INCORRECTA":
+                            cantidad_malas = cantidad_malas + 1
+                            respuesta.correcta = False
                 evaluacion.respuestas.append(respuesta)
             evaluacion.cantidad_buenas = cantidad_buenas
             evaluacion.cantidad_malas = cantidad_malas

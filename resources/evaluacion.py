@@ -173,7 +173,10 @@ class EvaluacionPruebaRegistroColumnas(Resource):
         columnDefs.append({'headerName':'Apellido Materno','field':'apellido_materno','sortable':True})
         prueba = Prueba.objects(id=id_prueba).first()
         for pregunta in prueba.preguntas:
-            columnDefs.append({'headerName':str(pregunta.numero_pregunta),'field':str(pregunta.numero_pregunta),'editable':True,'width':40})
+            if prueba.tipo == "ENSAYO" or prueba.tipo == "TALLER":
+                columnDefs.append({'headerName':str(pregunta.numero_pregunta),'field':str(pregunta.numero_pregunta),'editable':True,'width':40 })
+            if prueba.tipo == "TAREA":
+                columnDefs.append({'headerName':str(pregunta.numero_pregunta),'field':str(pregunta.numero_pregunta),'editable':True,'width':80, 'cellEditor': 'select',   'cellEditorParams': {'values': ['correcta','incorrecta']} } )
         return columnDefs
 
 
