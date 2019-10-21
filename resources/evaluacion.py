@@ -59,8 +59,10 @@ class EvaluacionRegistroAlternativas(Resource):
                                 cantidad_omitidas = cantidad_omitidas + 1
                             else:
                                 if pregunta.alternativa.upper() == respuesta.alternativa.upper():
+                                    respuesta.correcta = True
                                     cantidad_buenas = cantidad_buenas + 1
                                 else:
+                                    respuesta.correcta = False
                                     cantidad_malas = cantidad_malas + 1
         
         evaluacion.cantidad_buenas = cantidad_buenas
