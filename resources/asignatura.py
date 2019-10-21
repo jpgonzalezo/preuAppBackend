@@ -19,11 +19,32 @@ def init_module(api):
     api.add_resource(Asignaturas, '/asignaturas')
     api.add_resource(AsignaturaToken, '/asignatura')
     api.add_resource(AsignaturasCurso, '/asignaturas/curso/<id>')
+    api.add_resource(AsignaturaCursos, '/asignatura/cursos')
     api.add_resource(GraficoRendimientoEvaluaciones, '/grafico/rendimiento/evaluaciones/asignatura/<id>')
     api.add_resource(GraficoRendimientoEvaluacionesToken, '/grafico/rendimiento/evaluaciones/asignatura')
     api.add_resource(GraficoRendimientoAsistencia, '/grafico/rendimiento/asistencia/asignatura/<id>')
     api.add_resource(GraficoRendimientoAsistenciaToken, '/grafico/rendimiento/asistencia/asignatura')
 
+
+class AsignaturaCursos(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(AsignaturaCursos, self).__init__()
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        cursos = []
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        for curso in Curso.objects().all():
+            if profesor.asignatura in curso.asignaturas:
+                cursos.append({
+                    "id": str(curso.id),
+                    "nombre": str(curso.nombre)
+                })
+        return cursos
 
 
 class GraficoRendimientoAsistenciaToken(Resource):

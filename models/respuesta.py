@@ -8,11 +8,12 @@ ALTERNATIVAS = [
     ("C", "C"),
     ("D", "D"),
     ("E", "E"),
+    ("O", "O"),
     ]
 class Respuesta(db.EmbeddedDocument):
     correcta = db.BooleanField()
     numero_pregunta = db.IntField()
-    alternativa = db.StringField(choices=ALTERNATIVAS)
+    alternativa = db.StringField()
     meta = {'strict': False}
 
     def to_dict(self):

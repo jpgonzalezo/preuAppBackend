@@ -1,12 +1,15 @@
 from flask import Flask, Blueprint, jsonify, request
 from models.prueba import Prueba
+from models.pregunta import Pregunta
 from models.asignatura import Asignatura
 from models.curso import Curso
 from models.evaluacion import Evaluacion
 from models.administrador import Administrador
 from models.apoderado import Apoderado
+from models.respuesta import Respuesta
 from models.alumno import Alumno
 from models.profesor import Profesor
+from models.topico import Topico
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -15,18 +18,229 @@ from flask_restful import reqparse
 
 def init_module(api):
     api.add_resource(PruebaItem, '/pruebas/<id>')
+    api.add_resource(PruebaTopico, '/pruebas/<id>/topico')
+    api.add_resource(PruebaPregunta, '/pruebas/<id>/pregunta')
+    api.add_resource(PruebaPreguntaNumero, '/pruebas/<id>/pregunta/<numero>')
+    api.add_resource(PruebaPreguntaSubir, '/pruebas/<id>/pregunta/subir')
+    api.add_resource(PruebaPreguntaBajar, '/pruebas/<id>/pregunta/bajar')
     api.add_resource(Pruebas, '/pruebas')
     api.add_resource(PruebasAsignatura, '/pruebas_asignatura/<id>')
+    api.add_resource(PruebaPuntajeBase, '/pruebas/<id>/asignar/puntaje/base')
     api.add_resource(PruebasAsignaturaToken, '/pruebas/asignatura')
+    api.add_resource(PruebaRegistrarEvaluaciones, '/pruebas/<id>/registrar/evaluaciones')
     api.add_resource(GraficoRendimientoPreguntas, '/grafico/rendimiento/preguntas/<id>')
     api.add_resource(GraficoRendimientoTopicos, '/grafico/rendimiento/topicos/<id>')
     api.add_resource(GraficoRendimientoCursos, '/grafico/rendimiento/cursos/<id>')
+
+def takeNumero(elem):
+    return elem.numero_pregunta
+
+class PruebaRegistrarEvaluaciones(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaRegistrarEvaluaciones, self).__init__()
+    
+    def post(self,id):  
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        for registro in data['data']:
+            evaluacion = Evaluacion()
+            cantidad_buenas = 0
+            cantidad_malas = 0
+            cantidad_omitidas = 0
+            alumno = Alumno.objects(id=registro['id']).first()
+            evaluacion.alumno = alumno
+            evaluacion.prueba = prueba
+            for pregunta in prueba.preguntas:
+                respuesta = Respuesta()
+                respuesta.numero_pregunta = pregunta.numero_pregunta
+                if registro[str(pregunta.numero_pregunta)] == "":
+                    cantidad_omitidas = cantidad_omitidas + 1
+                    respuesta.correcta = False
+                    respuesta.alternativa = "O"
+                else:
+                    if registro[str(pregunta.numero_pregunta)].upper() == pregunta.alternativa.upper():
+                        cantidad_buenas = cantidad_buenas + 1
+                        respuesta.correcta = True
+                        respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
+                    else:
+                        cantidad_malas = cantidad_malas + 1
+                        respuesta.correcta = False
+                        respuesta.alternativa = str(registro[str(pregunta.numero_pregunta)].upper())
+                evaluacion.respuestas.append(respuesta)
+            evaluacion.cantidad_buenas = cantidad_buenas
+            evaluacion.cantidad_malas = cantidad_malas
+            evaluacion.cantidad_omitidas = cantidad_omitidas
+            evaluacion.puntaje = int(((850 - prueba.puntaje_base)/len(prueba.preguntas))*cantidad_buenas + prueba.puntaje_base)
+            evaluacion.save()
+        return {'Response':'exito'}
+    
+class PruebaPuntajeBase(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaPuntajeBase, self).__init__() 
+
+    def put(self,id):  
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        prueba.puntaje_base = int(data['puntaje_base'])
+        prueba.save()
+        return {'Response':'exito'}
+
+class PruebaPreguntaBajar(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaPreguntaBajar, self).__init__()
+        
+    def post(self,id):  
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        for pregunta in prueba.preguntas:
+            if int(pregunta.numero_pregunta) == int(data['numero']):
+                pregunta.numero_pregunta = pregunta.numero_pregunta + 1
+            else:
+                if int(pregunta.numero_pregunta) == int(data['numero'])+1:
+                    pregunta.numero_pregunta = pregunta.numero_pregunta - 1
+        prueba.preguntas.sort(key=takeNumero)
+        prueba.save()
+        return {'Response':'exito'}
+
+class PruebaPreguntaSubir(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaPreguntaSubir, self).__init__()
+
+    def post(self,id):  
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        for pregunta in prueba.preguntas:
+            if int(pregunta.numero_pregunta) == int(data['numero']):
+                pregunta.numero_pregunta = pregunta.numero_pregunta - 1
+            else:
+                if int(pregunta.numero_pregunta) == int(data['numero'])-1:
+                    pregunta.numero_pregunta = pregunta.numero_pregunta + 1
+        prueba.preguntas.sort(key=takeNumero)
+        prueba.save()
+        return {'Response':'exito'}
+    
+class PruebaPreguntaNumero(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaPreguntaNumero, self).__init__()
+
+    def delete(self,id,numero):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        prueba = Prueba.objects(id=id).first()
+        preguntas = []
+        for pregunta in prueba.preguntas:
+            if pregunta.numero_pregunta != int(numero):
+                preguntas.append(pregunta)
+        contador = 0
+        for pregunta in preguntas:
+            pregunta.numero_pregunta = contador + 1
+            contador = contador + 1
+        prueba.preguntas = preguntas
+        prueba.save()
+        return {"Response":"borrado"}
+
+class PruebaPregunta(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaPregunta, self).__init__()
+
+    def post(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        topico = Topico.objects(id=data['topico']).first()
+        pregunta = Pregunta()
+        if(data['tipo']=="TAREA"):
+            pregunta.numero_pregunta = len(prueba.preguntas)+1
+            pregunta.topico = topico
+        else:
+            pregunta.numero_pregunta = len(prueba.preguntas)+1
+            pregunta.topico = topico
+            pregunta.alternativa = data['alternativa']
+        prueba.preguntas.append(pregunta)
+        prueba.cantidad_preguntas = len(prueba.preguntas)
+        prueba.save()
+        return {"Response":"exito"}
+
+class PruebaTopico(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(PruebaTopico, self).__init__()
+
+    
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        data = request.data.decode()
+        data = json.loads(data)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        prueba = Prueba.objects(id=id).first()
+        topico = Topico.objects(id=data['id']).first()
+        prueba.topicos.append(topico.id)
+        prueba.save()
+        return {"Response":"exito"}
+
 
 class GraficoRendimientoCursos(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(GraficoRendimientoCursos, self).__init__()
+
     def get(self,id):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
@@ -249,4 +463,4 @@ class Pruebas(Resource):
         prueba.asignatura = profesor.asignatura.id
         prueba.tipo = data['tipo']
         prueba.save()
-        return {"Response":"exito"}
+        return {"Response":"exito", 'id':str(prueba.id)}

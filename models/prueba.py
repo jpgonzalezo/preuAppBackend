@@ -21,6 +21,7 @@ class Prueba(gj.Document):
     topicos = db.ListField(db.ReferenceField(Topico))
     tipo = db.StringField(choices=TIPOS_PRUEBA)
     activo = db.BooleanField(default=True)
+    puntaje_base = db.IntField(default=0)
     meta = {'strict': False}
 
     def getFecha(self):
@@ -50,5 +51,6 @@ class Prueba(gj.Document):
             "fecha": self.getFecha(),
             "tipo": self.tipo,
             "topicos": topicos,
-            "preguntas": preguntas
+            "preguntas": preguntas,
+            "puntaje_base": self.puntaje_base
         }
