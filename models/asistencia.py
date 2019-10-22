@@ -20,6 +20,16 @@ class Asistencia(db.Document):
             dia = "0"+str(self.fecha.day)
         return str(self.fecha.year)+"-"+mes+"-"+dia+" "+str(self.fecha.hour)+":"+str(self.fecha.minute)+":"+str(self.fecha.second)
 
+    def to_dict_short(self):
+        return{
+            "id": str(self.id),
+            "asignatura" : self.asignatura.nombre,
+            "alumnos_presentes" : len(self.alumnos_presentes),
+            "alumnos_ausentes" : len(self.alumnos_ausentes),
+            "curso": self.curso.nombre,
+            "fecha": self.getFecha()
+        }
+
     def to_dict(self):
         curso = Curso.objects(id=self.curso.id).first()
         asignatura = Asignatura.objects(id=self.asignatura.id).first()
