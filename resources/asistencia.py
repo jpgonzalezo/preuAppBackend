@@ -110,7 +110,7 @@ class AsistenciaAsignatura(Resource):
             return {'response': 'user_invalid'},401
         response = []
         for asistencia in Asistencia.objects(asignatura=id).all():
-            response.append(asistencia.to_dict())
+            response.append(asistencia.to_dict_short())
         return response
 
 class AsistenciaFecha(Resource):
