@@ -13,7 +13,7 @@ class Justificacion(db.Document):
     def to_dict(self):
         return {
             "id": str(self.id),
-            "asistencia": self.asistencia.to_dict(),
+            "asistencia": self.asistencia.to_dict_short(),
             "alumno": self.alumno.to_dict(),
             "causa": self.causa,
             "fecha": str(self.fecha)
