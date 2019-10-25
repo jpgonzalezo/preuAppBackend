@@ -91,7 +91,7 @@ class AsistenciaAsignaturaToken(Resource):
             return {'response': 'user_invalid'},401
         response = []
         for asistencia in Asistencia.objects(asignatura=profesor.asignatura.id).all():
-            response.append(asistencia.to_dict())
+            response.append(asistencia.to_dict_short())
         return response
 
 class AsistenciaAsignatura(Resource):
