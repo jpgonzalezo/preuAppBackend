@@ -112,11 +112,11 @@ class GraficoRendimientoAsistencia(Resource):
                 labels.append(curso.nombre)
                 asistencia_prom = 0
                 cantidad_asistencia = 0
-                for asistencia in Asistencia.objects(asignatura= asignatura,curso=curso):
+                for asistencia in Asistencia.objects(asignatura= asignatura,curso=curso).all():
                     promedio = 0
                     cantidad_asistencia = cantidad_asistencia +1
                     if len(asistencia.alumnos_presentes) + len(asistencia.alumnos_presentes)>0:
-                        promedio = int((len(asistencia.alumnos_presentes)/(len(asistencia.alumnos_presentes) + len(asistencia.alumnos_presentes)))*100)
+                        promedio = int( (len(asistencia.alumnos_presentes) / ( len(asistencia.alumnos_presentes) + len(asistencia.alumnos_presentes) ) )*100)
                     asistencia_prom = asistencia_prom + promedio
                 if cantidad_asistencia>0:
                     asistencia_prom = int(asistencia_prom/cantidad_asistencia)
