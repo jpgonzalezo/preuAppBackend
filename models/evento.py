@@ -8,8 +8,9 @@ class Evento(gj.Document):
     start = db.DateTimeField()
     backgroundColor = db.StringField()
     textColor = db.StringField(default="white")
-    curso = db.ReferenceField(Curso)
-    activo = db.BooleanField(default=True)
+    cursos = db.ListField(db.ReferenceField(Curso))
+    activo = db.BooleanField(default=False)
+    eliminado = db.BooleanField(default=True)
 
     def setStart(self):
         mes = str(self.start.month)
