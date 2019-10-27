@@ -78,9 +78,9 @@ class Observaciones(Resource):
         observacion.contenido = data['contenido']
         observacion.tipo = data['tipo']
         if administrador != None:
-            observacion.nombre_personal = administrador.nombres+" "administrador.apellido_paterno+" "administrador.apellido_materno
+            observacion.nombre_personal = administrador.nombres+" "+administrador.apellido_paterno+" "+administrador.apellido_materno
         if profesor != None:
-            observacion.nombre_personal = profesor.nombres+" "profesor.apellido_paterno+" "profesor.apellido_materno
+            observacion.nombre_personal = profesor.nombres+" "+profesor.apellido_paterno+" "+profesor.apellido_materno
         observacion.alumno = Alumno.objects(id=data['alumno']).first()
         observacion.save()
         return {'Response': 'exito'}
