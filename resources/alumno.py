@@ -248,6 +248,7 @@ class AlumnoHojaVida(Resource):
             'nombres' : alumno.nombres,
             'calegio' : colegio,
             'curso' : alumno.curso.nombre,
+            'curso_id': str(alumno.curso.id),
             'apellido_paterno' : alumno.apellido_paterno,
             'apellido_materno' : alumno.apellido_materno,
             'telefono' : alumno.telefono,
