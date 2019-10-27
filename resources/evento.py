@@ -85,20 +85,23 @@ class Eventos(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
         administrador = Administrador.load_from_token(token)
         profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
+        if administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         data = request.data.decode()
         data = json.loads(data)
         evento = Evento()
         evento.title = data['title']
         evento.backgroundColor = data['backgroundColor']
-        curso = Curso.objects(id=data['curso']).first()
-        evento.curso = curso.id
+        if data['curso'] != "TODOS_CURSOS":
+            evento.cursos.append(Curso.objects(id=data['curso']).first())
+        else:
+            for curso in Curso.objects(activo=True).all():
+                evento.cursos.append(curso)
         evento.start = datetime.strptime(data['fecha'], '%Y-%m-%d')
+        if administrador != None:
+            evento.activo=True
         evento.save()
         return {'Response':'exito'}
 

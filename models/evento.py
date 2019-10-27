@@ -10,7 +10,7 @@ class Evento(gj.Document):
     textColor = db.StringField(default="white")
     cursos = db.ListField(db.ReferenceField(Curso))
     activo = db.BooleanField(default=False)
-    eliminado = db.BooleanField(default=True)
+    eliminado = db.BooleanField(default=False)
 
     def setStart(self):
         mes = str(self.start.month)
