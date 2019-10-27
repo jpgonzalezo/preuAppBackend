@@ -22,6 +22,7 @@ import os
 
 def init_module(api):
     api.add_resource(AlumnoItem, '/alumno/<id>')
+    api.add_resource(AlumnoToken, '/alumno/token')
     api.add_resource(Alumnos, '/alumnos')
     api.add_resource(AlumnoHojaVida, '/hoja_vida/<id>')
     api.add_resource(AlumnoImagenItem, '/alumno_imagen/<id>')
@@ -140,21 +141,21 @@ class AlumnoGraficoRendimiento(Resource):
                 suma_tarea = suma_tarea + puntaje
 
             if Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()>0:
-                data_ensayo.append((suma_ensayo/Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()))
+                data_ensayo.append(int((suma_ensayo/Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count())))
             if Prueba.objects(asignatura = asignatura, tipo ="ENSAYO").count()==0:
-                data_ensayo.append(suma_ensayo)
+                data_ensayo.append(int(suma_ensayo))
 
 
             if Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()>0:
-                data_taller.append((suma_taller/Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()))
+                data_taller.append(int((suma_taller/Prueba.objects(asignatura = asignatura, tipo ="TALLER").count())))
             if Prueba.objects(asignatura = asignatura, tipo ="TALLER").count()==0:
-                data_taller.append(suma_taller)
+                data_taller.append(int(suma_taller))
 
 
             if Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()>0:
-                data_tarea.append((suma_tarea/Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()))
+                data_tarea.append(int((suma_tarea/Prueba.objects(asignatura = asignatura, tipo ="TAREA").count())))
             if Prueba.objects(asignatura = asignatura, tipo ="TAREA").count()==0:
-                data_tarea.append(suma_tarea)
+                data_tarea.append(int(suma_tarea))
 
 
         return{
@@ -260,6 +261,19 @@ class AlumnoHojaVida(Resource):
             'imagen': alumno.imagen,
             'direccion': alumno.direccion.calle+" "+alumno.direccion.numero+", "+alumno.direccion.comuna
         }
+
+class AlumnoToken(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(AlumnoToken, self).__init__()
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        if alumno == None:
+            return {'response': 'user_invalid'},401
+        return alumno.to_dict()
 
 class AlumnoItem(Resource):
     def __init__(self):
