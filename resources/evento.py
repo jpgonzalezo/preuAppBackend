@@ -112,11 +112,9 @@ class EventosSolicitudes(Resource):
     def get(self):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
         administrador = Administrador.load_from_token(token)
         profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
+        if administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         response = []
         eventos = Evento.objects().all()

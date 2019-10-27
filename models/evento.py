@@ -31,5 +31,6 @@ class Evento(gj.Document):
             "start": self.setStart(),
             "backgroundColor": self.backgroundColor,
             "textColor": self.textColor,
-            "cursos": cursos
+            "cursos": cursos,
+            "activo":self.activo
         }
