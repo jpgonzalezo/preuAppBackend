@@ -74,7 +74,17 @@ class Eventos(Resource):
         if alumno == None and apoderado == None and administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         response = []
-        eventos = Evento.objects().all()
+        eventos = []
+        if profesor != None or administrador != None:
+            eventos = Evento.objects().all()
+        if alumno != None:
+            for evento in Evento.objects().all():
+                if alumno.curso in evento.cursos:
+                    eventos.append(evento)
+        if apoderado != None:
+            for evento in Evento.objects().all():
+                if apoderado.alumno.curso in evento.cursos:
+                    eventos.append(evento)
         for evento in eventos:
             if not(evento.eliminado) and evento.activo:
                 response.append(evento.to_dict())
