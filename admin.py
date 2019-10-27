@@ -150,27 +150,18 @@ def add_views(admin):
     
     admin.add_view(ModelView(Curso, "Cursos", category="Curso"))
     admin.add_view(ModelView(Asignatura, "Asignaturas", category="Curso"))
-
     admin.add_view(ModelView(Administrador, "Administradores de Institucion", category="Perfiles"))
     admin.add_view(ModelView(Profesor, "Profesores", category="Perfiles"))
     admin.add_view(ModelView(Alumno, "Alumnos", category="Perfiles"))
     admin.add_view(ModelView(Apoderado, "Apoderados", category="Perfiles"))
-    
     admin.add_view(ModelView(Evaluacion, "Evaluaciones Realizadas", category="Evaluacion"))
     admin.add_view(ModelView(Topico, "Topicos", category="Evaluacion"))
     admin.add_view(ModelView(Prueba, "Pruebas", category="Evaluacion"))
-    
     admin.add_view(ModelView(Colegio, "Colegios"))
     admin.add_view(ModelView(Alerta, "Alertas"))
     admin.add_view(ModelView(Observacion, "Observaciones"))
     admin.add_view(ModelView(Anotacion, "Anotaciones"))
-
-    admin.add_view(ModelView(Ciudad, "Ciudades",category="Direccion"))
-    admin.add_view(ModelView(Region, "Regiones",category="Direccion"))
-    admin.add_view(ModelView(Comuna, "Comunas",category="Direccion"))
-
     admin.add_view(ModelView(Evento, "Eventos",category="Eventos"))
-
     admin.add_view(ModelView(Asistencia, "Asistencias", category="Asistencia y justificaciones"))
     admin.add_view(ModelView(Justificacion, "Justificaciones", category="Asistencia y justificaciones"))
     admin.add_view(ViewWithMethodViews("Importador"))
