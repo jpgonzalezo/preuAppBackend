@@ -22,10 +22,14 @@ class Evento(gj.Document):
         return str(self.start.year)+"-"+mes+"-"+dia
 
     def to_dict(self):
+        cursos=[]
+        for curso in self.cursos:
+            cursos.append(curso.nombre)
         return{
             "id": str(self.id),
             "title": self.title,
             "start": self.setStart(),
             "backgroundColor": self.backgroundColor,
-            "textColor": self.textColor
+            "textColor": self.textColor,
+            "cursos": cursos
         }

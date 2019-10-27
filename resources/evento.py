@@ -47,13 +47,11 @@ class EventoItem(Resource):
         return {'Response':'exito'}
     
     def put(self,id):
+        print("sajdlsajdlasjdlajsl")
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
         administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
+        if administrador == None:
             return {'response': 'user_invalid'},401
         evento = Evento.objects(id=id).first()
         evento.activo = True
@@ -78,7 +76,7 @@ class Eventos(Resource):
         response = []
         eventos = Evento.objects().all()
         for evento in eventos:
-            if evento.activo:
+            if not(evento.eliminado) and evento.activo:
                 response.append(evento.to_dict())
         return response
     
