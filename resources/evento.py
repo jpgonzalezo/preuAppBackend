@@ -96,6 +96,7 @@ class Eventos(Resource):
             evento.cursos.append(Curso.objects(id=data['curso']).first())
         else:
             for curso in Curso.objects(activo=True).all():
+                print(curso.nombre)
                 evento.cursos.append(curso)
         evento.start = datetime.strptime(data['fecha'], '%Y-%m-%d')
         if administrador != None:
