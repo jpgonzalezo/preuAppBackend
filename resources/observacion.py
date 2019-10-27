@@ -67,11 +67,9 @@ class Observaciones(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
         administrador = Administrador.load_from_token(token)
         profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
+        if administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         data = request.data.decode()
         data = json.loads(data)
@@ -79,7 +77,10 @@ class Observaciones(Resource):
         observacion.titulo = data['titulo']
         observacion.contenido = data['contenido']
         observacion.tipo = data['tipo']
-        observacion.nombre_personal = data['nombre_personal']
+        if administrador != None:
+            observacion.nombre_personal = administrador.nombres+" "administrador.apellido_paterno+" "administrador.apellido_materno
+        if profesor != None:
+            observacion.nombre_personal = profesor.nombres+" "profesor.apellido_paterno+" "profesor.apellido_materno
         observacion.alumno = Alumno.objects(id=data['alumno']).first()
         observacion.save()
         return {'Response': 'exito'}
