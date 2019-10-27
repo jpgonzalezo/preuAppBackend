@@ -27,6 +27,5 @@ class Evento(gj.Document):
             "title": self.title,
             "start": self.setStart(),
             "backgroundColor": self.backgroundColor,
-            "textColor": self.textColor,
-            "curso": self.curso.to_dict()
+            "textColor": self.textColor
         }
