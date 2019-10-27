@@ -17,7 +17,6 @@ class Login(Resource):
     def post(self):
         data = request.data.decode()
         data = json.loads(data)
-        
         if(data['tipo'] == 'ADMINISTRADOR'):
             administrador = Administrador.objects(email = data['email']).first()
             if(administrador == None):
@@ -41,11 +40,15 @@ class Login(Resource):
                     return {'respuesta': 'no_existe'}
         
         if(data['tipo'] == 'ALUMNO'):
-            alumno = Alumno.objects(email = data['email'], password = data['password']).first()
+            alumno = Alumno.objects(email = data['email']).first()
             if(alumno == None):
                 return {'respuesta': 'no_existe'}
             else:
-                return {'tipo':'ALUMNO','respuesta': json.loads(alumno.to_json())}
+                if alumno.check_password(data['password']):
+                    token = alumno.get_token()
+                    return {'tipo': 'ALUMNO','token': str(token)}
+                else:
+                    return {'respuesta': 'no_existe'}
 
 class Logout(Resource):
     def post(self):
