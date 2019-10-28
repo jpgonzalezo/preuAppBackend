@@ -5,6 +5,7 @@ from models.asignatura import Asignatura
 from models.alumno import Alumno
 from models.apoderado import Apoderado
 from models.administrador import Administrador
+from models.justificacion import Justificacion
 from models.profesor import Profesor
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
@@ -20,7 +21,43 @@ def init_module(api):
     api.add_resource(AsistenciaAsignaturaToken, '/asistencias/asignatura')
     api.add_resource(AsistenciaFecha, '/asistencias_fecha/<fecha>')
     api.add_resource(Asistencias, '/asistencias')
+    api.add_resource(AsistenciasAlumnoAsignatura, '/asistencias/alumno/asignatura/<id_asignatura>')
 
+class AsistenciasAlumnoAsignatura(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(AsistenciasAlumnoAsignatura, self).__init__()
+    def get(self, id_asignatura):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        asignatura = Asignatura.objects(id=id_asignatura).first()
+        if alumno == None and apoderado == None:
+            return {'response': 'user_invalid'},401
+        asistencias = []
+        for asistencia in Asistencia.objects(asignatura=asignatura).all():
+            if alumno in asistencia.alumnos_presentes:
+                asistencias.append(
+                    {
+                        "id": str(asistencia.id),
+                        "fecha": str(asistencia.fecha),
+                        "presente": True,
+                        "justificacion": "Sin justificación"
+                    }
+                )
+            else:
+                justificacion = "Sin justificación"
+                if Justificacion.objects(asistencia=asistencia,alumno=alumno).first() != None:
+                    justificacion = Justificacion.objects(asistencia=asistencia,alumno=alumno).first().causa
+                asistencias.append({
+                    "id": str(asistencia.id),
+                    "fecha": str(asistencia.fecha),
+                    "presente": False,
+                    "justificacion": justificacion
+                })
+        return asistencias
 class AsistenciaItem(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()

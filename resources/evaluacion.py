@@ -2,6 +2,7 @@ from flask import Flask, Blueprint, jsonify, request
 from models.prueba import Prueba
 from models.evaluacion import Evaluacion
 from models.administrador import Administrador
+from models.asignatura import Asignatura
 from models.alumno import Alumno
 from models.apoderado import Apoderado
 from models.profesor import Profesor
@@ -19,6 +20,7 @@ def init_module(api):
     api.add_resource(EvaluacionRegistroAlternativas, '/evaluaciones/<id_evaluacion>/editar/alternativas')
     api.add_resource(EvaluacionPruebaRegistro, '/evaluaciones/prueba/<id_prueba>/curso/<id_curso>/registrar')
     api.add_resource(EvaluacionItem, '/evaluaciones/<id_evaluacion>')
+    api.add_resource(EvaluacionesAlumno, '/evaluaciones/alumno/asignatura/<id_asignatura>')
     api.add_resource(EvaluacionPuntaje, '/evaluaciones/<id_evaluacion>/puntaje')
 
 class EvaluacionRegistroAlternativas(Resource):
@@ -152,6 +154,24 @@ class EvaluacionPuntaje(Resource):
         evaluacion.puntaje = int(data['puntaje'])
         evaluacion.save()
         return {'Response':'exito'},200
+
+class EvaluacionesAlumno(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(EvaluacionesAlumno, self).__init__()
+    def get(self,id_asignatura):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        asignatura = Asignatura.objects(id=id_asignatura).first()
+        if alumno == None:
+            return {'response': 'user_invalid'},401
+        evaluaciones = []
+        for evaluacion in Evaluacion.objects(alumno=alumno.id).all():
+            if evaluacion.prueba.asignatura == asignatura:
+                evaluaciones.append(evaluacion.to_dict())
+        return evaluaciones
 
 class EvaluacionItem(Resource):
     def __init__(self):

@@ -369,9 +369,18 @@ class Asignaturas(Resource):
         if alumno == None and apoderado == None and administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         asignaturas = []
-        for asignatura in Asignatura.objects().all():
-            if asignatura.activo:
-                asignaturas.append(asignatura.to_dict())
+        if administrador != None or profesor != None:
+            for asignatura in Asignatura.objects().all():
+                if asignatura.activo:
+                    asignaturas.append(asignatura.to_dict())
+        if alumno != None:
+            for asignatura in alumno.curso.asignaturas:
+                if asignatura.activo:
+                    asignaturas.append(asignatura.to_dict())
+        if apoderado != None:
+            for asignatura in apoderado.alumno.curso.asignaturas:
+                if asignatura.activo:
+                    asignaturas.append(asignatura.to_dict())
         return asignaturas
 
     def post(self):
