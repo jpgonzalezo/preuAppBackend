@@ -50,6 +50,16 @@ class Login(Resource):
                 else:
                     return {'respuesta': 'no_existe'}
 
+        if(data['tipo'] == 'APODERADO'):
+            apoderado = Apoderado.objects(email = data['email']).first()
+            if(apoderado == None):
+                return {'respuesta': 'no_existe'}
+            else:
+                if apoderado.check_password(data['password']):
+                    token = apoderado.get_token()
+                    return {'tipo': 'APODERADO','token': str(token)}
+                else:
+                    return {'respuesta': 'no_existe'}
 class Logout(Resource):
     def post(self):
         return {'respuesta': True}
