@@ -271,9 +271,13 @@ class AlumnoToken(Resource):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
         alumno = Alumno.load_from_token(token)
-        if alumno == None:
+        apoderado = Apoderado.load_from_token(token)
+        if alumno == None or apoderado == None:
             return {'response': 'user_invalid'},401
-        return alumno.to_dict()
+        if alumno != None:
+            return alumno.to_dict()
+        if apoderado != None:
+            return apoderado.alumno.to_dict()
 
 class AlumnoItem(Resource):
     def __init__(self):
