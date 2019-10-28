@@ -272,7 +272,7 @@ class AlumnoToken(Resource):
         token = args.get('auth-token')
         alumno = Alumno.load_from_token(token)
         apoderado = Apoderado.load_from_token(token)
-        if alumno == None or apoderado == None:
+        if alumno == None and apoderado == None:
             return {'response': 'user_invalid'},401
         if alumno != None:
             return alumno.to_dict()
