@@ -10,8 +10,6 @@ awswrangler==2.5.0
 Babel==2.6.0
 beautifulsoup4==4.9.3
 bokeh==2.3.0
-boto3==1.17.23
-botocore==1.20.23
 certifi==2020.12.5
 chardet==4.0.0
 Click==7.0
@@ -46,10 +44,8 @@ mongoengine-goodjson==1.1.8
 more-itertools==8.7.0
 msgpack==1.0.2
 multidict==5.1.0
-numpy==1.20.1
 openpyxl==3.0.7
 packaging==20.9
-pandas==1.2.3
 partd==1.1.0
 pg8000==1.17.0
 Pillow==8.1.2
@@ -63,12 +59,9 @@ pyparsing==2.4.7
 pytest==4.4.0
 python-dateutil==2.8.0
 python-editor==1.0.4
-pytz==2018.9
 PyYAML==5.4.1
 redshift-connector==2.0.874
 requests==2.25.1
-s3fs==0.5.2
-s3transfer==0.3.4
 scramp==1.2.0
 six==1.12.0
 sortedcontainers==2.3.0
