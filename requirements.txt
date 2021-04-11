@@ -79,7 +79,7 @@ tblib==1.7.0
 toolz==0.11.1
 tornado==6.1
 typing-extensions==3.7.4.3
-urllib3==1.26.3
+urllib3==1.26.4
 Werkzeug==1.0.1
 wrapt==1.12.1
 WTForms==2.3.3
