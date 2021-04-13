@@ -171,5 +171,5 @@ def add_views(admin):
 add_views(admin)
 
 if __name__ == '__main__':
-    app.run(host=app.config.get('HOST', '0.0.0.0'),
+    app.run(host=app.config.get('HOST', '127.0.0.1'),
             port=app.config.get('PORT', 4000))

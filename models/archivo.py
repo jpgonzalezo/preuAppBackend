@@ -27,9 +27,9 @@ class Archivo(gj.Document):
 
     # literal los class method son los services en java
     @classmethod
-    def upload(cls, new_file, asignatura_id):
+    def upload(cls, base_path, new_file, asignatura_id):
         asignatura = Asignatura.objects(id=asignatura_id).first()
-        folder = 'C:\\Users\\Usuario\\Desktop\\trabajo\\asignatura_' + asignatura_id
+        folder = base_path + asignatura_id
         if not os.path.exists(folder):
             os.mkdir(folder)
         file_name = secure_filename(new_file.filename)
@@ -54,3 +54,14 @@ class Archivo(gj.Document):
         archivo = Archivo.objects(id=archivo_id).first()
         print(60*"*", archivo.path)
         return send_file(archivo.path, as_attachment=True, attachment_filename=archivo.nombre + "")
+
+    @classmethod
+    def erase(cls, archivo_id):
+        try:
+            archivo = Archivo.objects(id=archivo_id).first()
+            os.remove(archivo.path)
+            archivo.delete()
+            return "Archivo eliminado"
+        except Exception as e:
+            print(str(e))
+            return "No se pudo eliminar el archivo"
