@@ -34,6 +34,8 @@ def init_modules(app, api):
     from resources import evaluacion
     from resources import evento
     from resources import archivo
+    from resources import video
+
 
     curso.init_module(api)
     alumno.init_module(api)
@@ -54,6 +56,7 @@ def init_modules(app, api):
     evaluacion.init_module(api)
     evento.init_module(api)
     archivo.init_module(api)
+    video.init_module(api)
 
 init_modules(app, api)
 
