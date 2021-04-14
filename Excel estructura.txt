@@ -1,0 +1,11 @@
+Excel Colegio:
+    Nombre, Calle, Numero, Comuna
+
+Excel Alumno (max 120):
+    RUT, Nombres, apellido 1, apellido 2, pte ingreso (opcional), sexo (3 opciones), email, telefono, calle, numero, comuna, villa(opcional), depto(opcional), curso(de la db), colegio(de la db)
+
+Excel apoderado (max 120):
+    RUT, Nombres, apellido 1, apellido 2, email, telefono, calle, numero, comuna, villa(opcional), depto(opcional), alumno (de la DB)
+
+Excel preguntas (max 90):
+    Topico (de la DB), alternativa_correcta, Numero (autogenerado) 
