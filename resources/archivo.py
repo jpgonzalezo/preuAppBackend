@@ -60,6 +60,6 @@ class ArchivoEnExcel(Resource):
         return excel(file)
 
     def get(self):
-        return create(current_app.config.get("BASE_PATH"), {'A': '"Dog,Cat,Bat"', 'C': '"wea1, wea2, wea3"'}, 100)
+        return create( {'A': '"Dog,Cat,Bat"', 'C': '"wea1, wea2, wea3"'}, 100, ['Animal','  ', "WEA"])
 
 

@@ -6,6 +6,9 @@ from models.curso import Curso
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import mongoengine_goodjson as gj
+from utils.excel_util import create_workbook as create_excel
+from utils.excel_util import map_to_option
+
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                           BadSignature, SignatureExpired)
 from flask import (
@@ -101,3 +104,15 @@ class Alumno(gj.Document):
             # the token ist'n valid
             return None
         return None
+    @classmethod
+    def create_layout_excel(cls):
+        headers = ["RUT","Nombres","Apellido 1","Apellido 2","Pte ingreso","Sexo","Email","Telefono","Calle","Numero","Comuna","Villa","Depto","Curso","Colegio"]
+        colegios_string = map_to_option(Colegio.objects().all())
+        cursos_string = map_to_option(Curso.objects().all())
+        dict_ = {'O': '"' + colegios_string + '"', 'N': '"' + cursos_string + '"'}
+        return create_excel(dict_,100, headers)
+
+
+
+
+    
