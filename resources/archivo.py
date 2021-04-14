@@ -6,6 +6,8 @@ from models.apoderado import Apoderado
 from models.profesor import Profesor
 from models.asignatura import Asignatura
 from models.evaluacion import Evaluacion
+from utils.excel_util import sheet_Tupla as excel
+from utils.excel_util import create_workbook as create
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 import json
@@ -16,6 +18,8 @@ from flask_restful import reqparse
 def init_module(api):
     api.add_resource(ArchivoAsignatura, '/archivoAsignatura/<asignatura_id>')
     api.add_resource(ArchivoItem, '/archivo/<archivo_id>')
+    api.add_resource(ArchivoEnExcel, '/archivoExcel/')
+
 
 
 class ArchivoAsignatura(Resource):
@@ -43,4 +47,19 @@ class ArchivoItem(Resource):
     def delete(self, archivo_id):
         
         return {'Response': Archivo.erase(archivo_id)}
+
+class ArchivoEnExcel(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ArchivoEnExcel, self).__init__()
+
+    def post(self):
+        file = request.files["file"]
+        print (excel(file))
+        return excel(file)
+
+    def get(self):
+        return create(current_app.config.get("BASE_PATH"), {'A': '"Dog,Cat,Bat"', 'C': '"wea1, wea2, wea3"'}, 100)
+
 

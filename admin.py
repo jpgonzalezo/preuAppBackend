@@ -28,6 +28,7 @@ from models.justificacion import Justificacion
 from models.anotacion import Anotacion
 from models.evento import Evento
 from models.archivo import Archivo
+from models.video import Video
 
 def create_app(config="config.cfg"):
     app = Flask(__name__)
@@ -166,6 +167,7 @@ def add_views(admin):
     admin.add_view(ModelView(Asistencia, "Asistencias", category="Asistencia y justificaciones"))
     admin.add_view(ModelView(Justificacion, "Justificaciones", category="Asistencia y justificaciones"))
     admin.add_view(ModelView(Archivo,"Archivos"))
+    admin.add_view(ModelView(Video,"Videos"))
     admin.add_view(ViewWithMethodViews("Importador"))
 
 add_views(admin)
