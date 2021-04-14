@@ -31,3 +31,12 @@ class Colegio(gj.Document):
                 contador= contador+1
         self.cantidad_estudiantes = contador
         return True
+
+    @classmethod
+    def create_from_excel(cls, list_rows):
+        for colegio in list_rows:
+            direccion = Direccion(calle = colegio[1], numero = str(colegio[2]), comuna = colegio[3])
+            colegio = Colegio(direccion = direccion, nombre= colegio[0])
+            colegio.save()
+        return "hecho"
+
