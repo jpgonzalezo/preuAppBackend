@@ -19,6 +19,8 @@ from flask import (
     Response,
     jsonify
     )
+from utils.excel_util import create_workbook as create_excel
+
 class Apoderado(gj.Document):
     nombres = db.StringField()
     apellido_paterno = db.StringField(max_length=20)
@@ -87,3 +89,9 @@ class Apoderado(gj.Document):
             # the token ist'n valid
             return None
         return None
+
+    @classmethod
+    def create_layout_excel(cls):
+        headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa", "Depto", "RUN Alumno"]
+        result_list = [Alumno.export_to_excel()]
+        return create_excel(result_list, headers, "Formato_apoderados")

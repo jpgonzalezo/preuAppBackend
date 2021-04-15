@@ -18,6 +18,9 @@ class Colegio(gj.Document):
             "cantidad_estudiantes": self.cantidad_estudiantes,
             "direccion": self.direccion.to_dict()
         }
+
+    def to_excel(self):
+        return [str(self.id),self.nombre]
     
     def __str__(self):
         return self.nombre
@@ -39,4 +42,12 @@ class Colegio(gj.Document):
             colegio = Colegio(direccion = direccion, nombre= colegio[0])
             colegio.save()
         return "hecho"
+
+    @classmethod
+    def export_to_excel(cls):
+        colegios= Colegio.objects().all()
+        result_list_colegios=[["Id. Colegio", "Nombre Colegio"]]
+        for colegio in colegios:
+            result_list_colegios.append(colegio.to_excel())
+        return result_list_colegios
 

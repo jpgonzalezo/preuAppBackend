@@ -67,6 +67,9 @@ class Alumno(gj.Document):
             "imagen": self.imagen
         }
     
+    def to_excel(self):
+        return [self.rut,self.nombres, self.apellido_paterno, self.apellido_materno]
+    
     def encrypt_password(self, password_to_encrypt):
     	self.password = generate_password_hash(password_to_encrypt)
 
@@ -104,13 +107,20 @@ class Alumno(gj.Document):
             # the token ist'n valid
             return None
         return None
+
     @classmethod
     def create_layout_excel(cls):
-        headers = ["RUT","Nombres","Apellido 1","Apellido 2","Pte ingreso","Sexo","Email","Telefono","Calle","Numero","Comuna","Villa","Depto","Curso","Colegio"]
-        colegios_string = map_to_option(Colegio.objects().all())
-        cursos_string = map_to_option(Curso.objects().all())
-        dict_ = {'O': '"' + colegios_string + '"', 'N': '"' + cursos_string + '"'}
-        return create_excel(dict_,100, headers)
+        headers = ["RUN","Nombres","Apellido Paterno","Apellido Materno","Puntaje Ingreso","Sexo","Email","Telefono","Calle","Numero","Comuna","Villa","Depto","Id. Curso","Id. Colegio"]
+        result_list = [Colegio.export_to_excel(),Curso.export_to_excel()]
+        return create_excel(result_list, headers, "Formato_alumnos")
+
+    @classmethod
+    def export_to_excel(cls):
+        alumnos= Alumno.objects().all()
+        result_list_alumnos=[["RUN", "Nombres", "Apellido Paterno", "Apellido Materno"]]
+        for alumno in alumnos:
+            result_list_alumnos.append(alumno.to_excel())
+        return result_list_alumnos
 
 
 

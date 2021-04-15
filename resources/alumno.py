@@ -30,7 +30,7 @@ def init_module(api):
     api.add_resource(AlumnosCurso, '/alumnos_curso/<id_curso>')
     api.add_resource(AlumnoGraficoRendimiento, '/alumno_grafico_rendimiento/<id>')
     api.add_resource(AlumnoGraficoAsistencia, '/alumno_grafico_asistencia/<id>')
-    api.add_resource(AlumnoExcel, '/alumnoExcel/')
+    api.add_resource(AlumnoExcel, '/alumnoExcel')
 
 
 class AlumnoGraficoAsistencia(Resource):

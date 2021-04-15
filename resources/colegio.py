@@ -15,7 +15,7 @@ from flask_restful import reqparse
 def init_module(api):
     api.add_resource(ColegioItem, '/colegios/<id>')
     api.add_resource(Colegios, '/colegios')
-    api.add_resource(ColegiosExcel, '/colegiosExcel/')
+    api.add_resource(ColegiosExcel, '/colegiosExcel')
 
 
 class ColegioItem(Resource):
@@ -100,6 +100,5 @@ class ColegiosExcel(Resource):
     def post(self):
         file = request.files["file"]
         lista = excel_read(file)
-        print (lista)
         return {'Response': Colegio.create_from_excel(lista)}
 

@@ -2,6 +2,7 @@ from db import db
 from datetime import datetime
 from models.alternativa import Alternativa
 from models.topico import Topico
+from utils.excel_util import create_workbook as create_excel
 
 ALTERNATIVAS = [
     ("A", "A"),
@@ -22,3 +23,9 @@ class Pregunta(db.EmbeddedDocument):
             "topico": self.topico.to_dict(),
             "alternativa": self.alternativa
         }
+
+    @classmethod
+    def create_layout_excel(cls):
+        headers = ["Numero","Alternativa Correcta", "Id. Topico"]
+        result_list = [Topico.export_to_excel()]
+        return create_excel(result_list, headers, "Formato_preguntas")

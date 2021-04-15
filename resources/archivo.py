@@ -18,7 +18,7 @@ from flask_restful import reqparse
 def init_module(api):
     api.add_resource(ArchivoAsignatura, '/archivoAsignatura/<asignatura_id>')
     api.add_resource(ArchivoItem, '/archivo/<archivo_id>')
-    api.add_resource(ArchivoEnExcel, '/archivoExcel/')
+    api.add_resource(ArchivoEnExcel, '/archivoExcel')
 
 
 

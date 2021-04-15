@@ -12,6 +12,9 @@ class Curso(gj.Document):
 
     def __str__(self):
         return self.nombre
+
+    def to_excel(self):
+        return [str(self.id),self.nombre]
     
     def to_dict(self):
         asignaturas = []
@@ -36,3 +39,11 @@ class Curso(gj.Document):
                 contador= contador+1
         self.cantidad_estudiantes = contador
         return True
+
+    @classmethod
+    def export_to_excel(cls):
+        cursos= Curso.objects().all()
+        result_list_cursos=[["Id. Curso", "Nombre Curso"]]
+        for curso in cursos:
+            result_list_cursos.append(curso.to_excel())
+        return result_list_cursos

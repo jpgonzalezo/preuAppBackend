@@ -18,6 +18,8 @@ def init_module(api):
     api.add_resource(ApoderadoImagenItem, '/apoderado_imagen/<id>')
     api.add_resource(ApoderadoImagenDefault, '/apoderado_imagen_default/<id>')
     api.add_resource(ApoderadoAsignarAlumno, '/apoderado_alumno/<id_apoderado>/<id_alumno>')
+    api.add_resource(ApoderadoExcel, '/apoderadoExcel')
+
 class ApoderadoItem(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
@@ -127,3 +129,7 @@ class ApoderadoAsignarAlumno(Resource):
         apoderado.imagen = str(apoderado.id)
         apoderado.save()
         return { 'Response':'exito'}
+
+class ApoderadoExcel(Resource):
+    def get(self):
+        return Apoderado.create_layout_excel()

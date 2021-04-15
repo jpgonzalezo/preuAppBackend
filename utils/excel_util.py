@@ -14,23 +14,28 @@ def sheet_Tupla(path):
     result_list.pop(0)
     return result_list
 
-def create_workbook(validate_dict, max_rows, headers):
-    print (validate_dict)
-    keys = validate_dict.keys()
-    print (keys)
+def create_workbook(data_list, headers, filename):
+    #print (data_list)
+    #keys = validate_dict.keys()
+    #print (keys)
     wb = Workbook()
     ws = wb.active
     ws.append(headers)
-    for element in keys:
-        print (element)
-        data_val = DataValidation(type="list",formula1=validate_dict[element]) #You can change =$A:$A with a smaller range like =A1:A9
-        ws.add_data_validation(data_val)
-        for num in range(2, max_rows + 2):
-            data_val.add(ws[element + str(num)]) #If you go to the cell B1 you will find a drop down list with all the values from the column A
+    for index, item in enumerate(data_list):
+        #print(index, item)
+        ws1 = wb.create_sheet("Data"+str(index+1))
+        for row in item:
+            ws1.append(row)
+    #for element in keys:
+    #    print (validate_dict[element])
+    #    data_val = DataValidation(type="list",formula1=validate_dict[element]) #You can change =$A:$A with a smaller range like =A1:A9
+    #    ws.add_data_validation(data_val)
+    #    for num in range(2, max_rows + 2):
+    #        data_val.add(ws[element + str(num)]) #If you go to the cell B1 you will find a drop down list with all the values from the column A
     return Response(
         save_virtual_workbook(wb),
         headers={
-            'Content-Disposition': 'attachment; filename=sheet.xlsx',
+            'Content-Disposition': 'attachment; filename='+filename+'.xlsx',
             'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }
     )

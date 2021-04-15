@@ -16,3 +16,14 @@ class Topico(gj.Document):
             "asignatura": self.asignatura.to_dict(),
             "nombre": self.nombre
         }
+    
+    def to_excel(self):
+        return [str(self.id),self.nombre, self.asignatura.to_dict()["nombre"]]
+    
+    @classmethod
+    def export_to_excel(cls):
+        topicos= Topico.objects().all()
+        result_list_topicos=[["Id. Topico", "Nombre Topico", "Asignatura"]]
+        for topico in topicos:
+            result_list_topicos.append(topico.to_excel())
+        return result_list_topicos
