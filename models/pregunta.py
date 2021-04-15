@@ -29,3 +29,13 @@ class Pregunta(db.EmbeddedDocument):
         headers = ["Numero","Alternativa Correcta", "Id. Topico"]
         result_list = [Topico.export_to_excel(asignatura_id)]
         return create_excel(result_list, headers, "Formato_preguntas")
+
+    @classmethod
+    def create_from_excel(cls, list_rows, asignatura_id):
+        for pregunta in list_rows:
+            topico = Topico.objects(asignatura = asignatura_id).first()
+            preguntaNuevo = Pregunta(numero_pregunta = pregunta[0],
+                                    alternativa = pregunta[1],
+                                    topico = topico)
+            preguntaNuevo.save()
+        return "hecho"

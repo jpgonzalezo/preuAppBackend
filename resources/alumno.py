@@ -6,6 +6,7 @@ from models.apoderado import Apoderado
 from models.administrador import Administrador
 from models.profesor import Profesor
 from models.curso import Curso
+from utils.excel_util import sheet_Tupla as excel_read
 from models.evaluacion import Evaluacion
 from models.prueba import Prueba
 from models.asignatura import Asignatura
@@ -402,3 +403,8 @@ class AlumnoImagenDefault(Resource):
 class AlumnoExcel(Resource):
     def get(self):
         return Alumno.create_layout_excel()
+
+    def post(self):
+        file = request.files["file"]
+        lista = excel_read(file)
+        return {'Response': Alumno.create_from_excel(lista)}

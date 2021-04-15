@@ -109,6 +109,28 @@ class Alumno(gj.Document):
         return None
 
     @classmethod
+    def create_from_excel(cls, list_rows):
+        for alumno in list_rows:
+            curso = Curso.objects(id = alumno[13]).first()
+            colegio = Colegio.objects(id = alumno[14]).first()
+            ##TODO: incorporar villa y depto en la posición 11 y 12
+            direccion = Direccion(calle = alumno[8], numero = str(alumno[9]), comuna = alumno[10])
+            alumnoNuevo = Alumno(rut =str(alumno[0]),
+                            nombres = alumno[1],
+                            apellido_paterno = alumno[2],
+                            apellido_materno = alumno[3],
+                            sexo = alumno[5],
+                            email = alumno[6],
+                            telefono = str(alumno[7]),
+                            direccion = direccion, colegio = colegio, curso = curso)
+            if (alumno[4] != None and alumno[4] != ""):
+                alumnoNuevo.puntaje_ingreso = alumno[4]
+            else:
+                alumnoNuevo.puntaje_ingreso = 0
+            alumnoNuevo.save()
+        return "hecho"
+
+    @classmethod
     def create_layout_excel(cls):
         headers = ["RUN","Nombres","Apellido Paterno","Apellido Materno","Puntaje Ingreso","Sexo","Email","Telefono","Calle","Numero","Comuna","Villa","Depto","Id. Curso","Id. Colegio"]
         result_list = [Colegio.export_to_excel(),Curso.export_to_excel()]

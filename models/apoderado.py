@@ -95,3 +95,19 @@ class Apoderado(gj.Document):
         headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa", "Depto", "RUN Alumno"]
         result_list = [Alumno.export_to_excel()]
         return create_excel(result_list, headers, "Formato_apoderados")
+
+    @classmethod
+    def create_from_excel(cls, list_rows):
+        for apoderado in list_rows:
+            alumno = Alumno.objects(rut = str(apoderado[11])).first()
+            ##TODO: incorporar villa y depto en la posición 9 y 10
+            direccion = Direccion(calle = apoderado[6], numero = str(apoderado[7]), comuna = apoderado[8])
+            apoderadoNuevo = Apoderado(rut =str(apoderado[0]),
+                            nombres = apoderado[1],
+                            apellido_paterno = apoderado[2],
+                            apellido_materno = apoderado[3],
+                            email = apoderado[4],
+                            telefono = str(apoderado[5]),                            
+                            direccion = direccion, alumno = alumno)
+            apoderadoNuevo.save()
+        return "hecho"

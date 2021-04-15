@@ -3,6 +3,7 @@ from models.apoderado import Apoderado
 from models.direccion import Direccion
 from models.alumno import Alumno
 from models.administrador import Administrador
+from utils.excel_util import sheet_Tupla as excel_read
 from models.profesor import Profesor
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
@@ -133,3 +134,8 @@ class ApoderadoAsignarAlumno(Resource):
 class ApoderadoExcel(Resource):
     def get(self):
         return Apoderado.create_layout_excel()
+
+    def post(self):
+        file = request.files["file"]
+        lista = excel_read(file)
+        return {'Response': Apoderado.create_from_excel(lista)}
