@@ -25,7 +25,7 @@ class Pregunta(db.EmbeddedDocument):
         }
 
     @classmethod
-    def create_layout_excel(cls):
+    def create_layout_excel(cls, asignatura_id):
         headers = ["Numero","Alternativa Correcta", "Id. Topico"]
-        result_list = [Topico.export_to_excel()]
+        result_list = [Topico.export_to_excel(asignatura_id)]
         return create_excel(result_list, headers, "Formato_preguntas")
