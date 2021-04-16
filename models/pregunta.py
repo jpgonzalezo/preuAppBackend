@@ -32,10 +32,11 @@ class Pregunta(db.EmbeddedDocument):
 
     @classmethod
     def create_from_excel(cls, list_rows, asignatura_id):
+        list_preguntas = []
         for pregunta in list_rows:
             topico = Topico.objects(asignatura = asignatura_id).first()
             preguntaNuevo = Pregunta(numero_pregunta = pregunta[0],
                                     alternativa = pregunta[1],
                                     topico = topico)
-            preguntaNuevo.save()
-        return "hecho"
+            list_preguntas.append(preguntaNuevo)
+        return list_preguntas
