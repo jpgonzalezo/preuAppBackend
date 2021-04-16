@@ -24,7 +24,7 @@ def init_module(api):
     api.add_resource(PruebaPreguntaNumero, '/pruebas/<id>/pregunta/<numero>')
     api.add_resource(PruebaPreguntaSubir, '/pruebas/<id>/pregunta/subir')
     api.add_resource(PruebaPreguntaBajar, '/pruebas/<id>/pregunta/bajar')
-    api.add_resource(PruebaPreguntasExcel, '/pruebas/<prueba_id>/preguntasExcel')
+    api.add_resource(PruebaPreguntasExcel, '/pruebas/preguntasExcel')
     api.add_resource(Pruebas, '/pruebas')
     api.add_resource(PruebasAsignatura, '/pruebas_asignatura/<id>')
     api.add_resource(PruebaPuntajeBase, '/pruebas/<id>/asignar/puntaje/base')
@@ -481,15 +481,17 @@ class PruebaPreguntasExcel(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        self.reqparse.add_argument('prueba_id',type=str,required=True,location='args')
         super(PruebaPreguntasExcel, self).__init__()
 
-    def post(self, prueba_id):
+    def post(self):
         file = request.files["file"]
         lista = excel_read(file)
-        #args = self.reqparse.parse_args()
-        #token = args.get('auth-token')
-        #profesor = Profesor.load_from_token(token)
-        #if profesor == None:
-        #   return {'response': 'user_invalid'},401
+        args = self.reqparse.parse_args()
+        prueba_id = args.get('prueba_id')
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+           return {'response': 'user_invalid'},401
         #TODO: cambiar ese id por el que vendrá en el token (profesor.asignatura.id)
         return {'Response': Prueba.load_preguntas(lista, prueba_id)}
