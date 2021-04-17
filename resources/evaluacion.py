@@ -22,6 +22,7 @@ def init_module(api):
     api.add_resource(EvaluacionItem, '/evaluaciones/<id_evaluacion>')
     api.add_resource(EvaluacionesAlumno, '/evaluaciones/alumno/asignatura/<id_asignatura>')
     api.add_resource(EvaluacionPuntaje, '/evaluaciones/<id_evaluacion>/puntaje')
+    api.add_resource(Autoevaluacion, '/autoevaluacion')
 
 class EvaluacionRegistroAlternativas(Resource):
     def __init__(self):
@@ -276,3 +277,18 @@ class EvaluacionesPrueba(Resource):
         for evaluacion in Evaluacion.objects(prueba=prueba.id):
             response.append(evaluacion.to_dict())
         return response
+
+class Autoevaluacion(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(Autoevaluacion, self).__init__()
+    def post(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        if alumno == None:
+           return {'response': 'user_invalid'},401
+        body = request.data.decode()
+        body = json.loads(body)
+        return Evaluacion.evaluar_prueba(alumno.id, body)

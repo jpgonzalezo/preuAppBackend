@@ -109,20 +109,21 @@ class Alumno(gj.Document):
         return None
 
     @classmethod
+    #TODO: validar que vengan los id foraneos, el rut y correo con formato correo
     def create_from_excel(cls, list_rows):
         for alumno in list_rows:
             curso = Curso.objects(id = alumno[13]).first()
             colegio = Colegio.objects(id = alumno[14]).first()
-            ##TODO: incorporar villa y depto en la posición 11 y 12
+            ##TODO: incorporar villa y depto en la posición 11 y 12. Devolver los q no se pudieron crear
             direccion = Direccion(calle = alumno[8], numero = str(alumno[9]), comuna = alumno[10])
             alumnoNuevo = Alumno(rut =str(alumno[0]),
-                            nombres = alumno[1],
-                            apellido_paterno = alumno[2],
-                            apellido_materno = alumno[3],
-                            sexo = alumno[5],
-                            email = alumno[6],
-                            telefono = str(alumno[7]),
-                            direccion = direccion, colegio = colegio, curso = curso)
+                                 nombres = alumno[1],
+                                 apellido_paterno = alumno[2],
+                                 apellido_materno = alumno[3],
+                                 sexo = alumno[5],
+                                 email = alumno[6],
+                                 telefono = str(alumno[7]),
+                                 direccion = direccion, colegio = colegio, curso = curso)
             if (alumno[4] != None and alumno[4] != ""):
                 alumnoNuevo.puntaje_ingreso = alumno[4]
             else:

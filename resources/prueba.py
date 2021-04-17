@@ -42,7 +42,7 @@ class PruebaRegistrarEvaluaciones(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(PruebaRegistrarEvaluaciones, self).__init__()
-    
+    #TODO:revisar logica
     def post(self,id):  
         args = self.reqparse.parse_args()
         token = args.get('auth-token')

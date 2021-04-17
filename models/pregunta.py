@@ -30,13 +30,19 @@ class Pregunta(db.EmbeddedDocument):
         result_list = [Topico.export_to_excel(asignatura_id)]
         return create_excel(result_list, headers, "Formato_preguntas")
 
+    #TODO: validar id del topico y q venga la alternativa entre los valores permitidos
     @classmethod
-    def create_from_excel(cls, list_rows, asignatura_id):
+    def create_from_excel(cls, list_rows):
         list_preguntas = []
-        for pregunta in list_rows:
-            topico = Topico.objects(asignatura = asignatura_id).first()
-            preguntaNuevo = Pregunta(numero_pregunta = pregunta[0],
-                                    alternativa = pregunta[1],
-                                    topico = topico)
+        for index, pregunta in enumerate(list_rows):
+            topico = Topico.objects(id = pregunta[2]).first()
+            alternativa = pregunta[1]
+            #if a in  ["A","B","C","D","E"]:
+            #    pass
+            #else: 
+            #    no pass
+            preguntaNuevo = Pregunta(numero_pregunta = index+1,
+                                     alternativa = alternativa,
+                                     topico = topico)
             list_preguntas.append(preguntaNuevo)
         return list_preguntas

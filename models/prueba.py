@@ -55,10 +55,11 @@ class Prueba(gj.Document):
             "puntaje_base": self.puntaje_base
         }
 
+    #TODO: validar que id de la prueba
     @classmethod    
-    def load_preguntas(cls,lista, prueba_id):
+    def load_preguntas(cls, lista, prueba_id):
         prueba =  Prueba.objects(id=prueba_id).first()
-        prueba.preguntas = Pregunta.create_from_excel(lista,prueba.asignatura)
+        prueba.preguntas = Pregunta.create_from_excel(lista)
         prueba.cantidad_preguntas = len(lista)
         prueba.save()
         return "preguntas cargadas"
