@@ -122,12 +122,24 @@ class ApoderadoImagenDefault(Resource):
         return { 'Response':'exito','id': str(apoderado.id)}
 
 class ApoderadoAsignarAlumno(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ApoderadoAsignarAlumno, self).__init__()
+
     def get(self,id_apoderado,id_alumno):
-        apoderado = Apoderado.objects(id=id).first()
-        imagen = Image.open("./uploads/apoderados/default_thumbnail.jpg")
-        imagen.thumbnail((800, 800))
-        imagen.save(os.path.join("./uploads/apoderados", str(id)+'_thumbnail.jpg'))
-        apoderado.imagen = str(apoderado.id)
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+
+        apoderado = Apoderado.objects(id=id_apoderado).first()
+        alumno = Alumno.objects(id=id_alumno).first()
+        apoderado.alumno = alumno
         apoderado.save()
         return { 'Response':'exito'}
 
