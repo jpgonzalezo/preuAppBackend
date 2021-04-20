@@ -137,7 +137,8 @@ class Profesores(Resource):
         profesor.rut = data['rut']
         direccion = Direccion(calle=data['calle'],
                               numero=data['numero'],
-                              comuna=data['comuna'])
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
         profesor.direccion = direccion
         asignatura = Asignatura.objects(id=data['asignatura']).first()
         profesor.asignatura = asignatura.id
