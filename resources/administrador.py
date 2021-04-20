@@ -95,6 +95,11 @@ class Administradores(Resource):
         administrador.email = data['email']
         administrador.rut = data['rut']
         administrador.encrypt_password(data['rut'])
+        direccion = Direccion(calle=data['calle'],
+                numero=data['numero'],
+                comuna=data['comuna'],
+                cas_dep_of=data['cas_dep_of'])
+        administrador.direccion = direccion
         administrador.save()
         return {'Response': 'exito',
                 'id': str(administrador.id)}

@@ -1,6 +1,7 @@
 from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from models.direccion import Direccion
 import mongoengine_goodjson as gj
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                           BadSignature, SignatureExpired)
@@ -25,6 +26,7 @@ class Administrador(gj.Document):
     telefono = db.StringField(max_length=12)
     password = db.StringField()
     activo = db.BooleanField(default=True)
+    direccion = db.EmbeddedDocumentField(Direccion)
     imagen = db.StringField()
     meta = {'strict': False}
 

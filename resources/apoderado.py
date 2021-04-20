@@ -94,8 +94,18 @@ class Apoderados(Resource):
         apoderado.rut = data['rut']
         direccion = Direccion(calle=data['calle'],
                               numero=data['numero'],
-                              comuna=data['comuna'])
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
         apoderado.direccion = direccion
+
+        #Asignar alumno
+        alumno = Alumno.objects(rut=data['rut_alumno']).first()
+        if alumno == None:
+            return {'Response':'not_alumno'}
+        else:
+            apoderado.alumno = alumno
+        
+
         apoderado.save()
         return {'Response': 'exito',
                 'id': str(apoderado.id)}
