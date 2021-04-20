@@ -362,7 +362,8 @@ class Alumnos(Resource):
         alumno.puntaje_ingreso = data['puntaje_ingreso']
         direccion = Direccion(calle=data['calle'],
                               numero=data['numero'],
-                              comuna=data['comuna'])
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
         alumno.direccion = direccion
         colegio = Colegio.objects(id=data['colegio']).first()
         curso = Curso.objects(id=data['curso']).first()
