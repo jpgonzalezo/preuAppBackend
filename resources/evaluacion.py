@@ -23,6 +23,7 @@ def init_module(api):
     api.add_resource(EvaluacionesAlumno, '/evaluaciones/alumno/asignatura/<id_asignatura>')
     api.add_resource(EvaluacionPuntaje, '/evaluaciones/<id_evaluacion>/puntaje')
     api.add_resource(Autoevaluacion, '/autoevaluacion')
+    api.add_resource(PruebasPorResponder, '/pruebasNoRespondidas')
 
 class EvaluacionRegistroAlternativas(Resource):
     def __init__(self):
@@ -291,4 +292,21 @@ class Autoevaluacion(Resource):
            return {'response': 'user_invalid'},401
         body = request.data.decode()
         body = json.loads(body)
-        return Evaluacion.evaluar_prueba(alumno.id, body)
+        return Evaluacion.evaluar_prueba(alumno.id, body["data"])
+
+
+class PruebasPorResponder(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        self.reqparse.add_argument('asignatura_id',type=str,required=True,location='args')
+        super(PruebasPorResponder, self).__init__()
+
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        if alumno == None:
+           return {'response': 'user_invalid'},401
+        asignatura_id = args.get('asignatura_id')
+        return Evaluacion.get_pruebas_no_respondidas(alumno.id, asignatura_id)

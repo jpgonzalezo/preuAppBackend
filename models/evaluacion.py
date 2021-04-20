@@ -79,3 +79,23 @@ class Evaluacion(gj.Document):
         evaluacion.save()
         return {'Response':'exito'}
    
+    @classmethod
+    def list_to_dict(cls,lista):
+        result_list=[]
+        for element in lista:
+            result_list.append(element.to_dict())
+        return result_list
+
+    @classmethod
+    def get_pruebas_no_respondidas(cls, alumno_id, asignatura_id):
+        ensayos= Prueba.objects(asignatura = asignatura_id, tipo = 'ENSAYO').all()
+        talleres= Prueba.objects(asignatura = asignatura_id, tipo = 'TALLER').all()
+        pruebas = list(ensayos) + list(talleres)
+        
+        pruebas_no_respondidas = []
+        for prueba in pruebas:
+            evaluacion =  Evaluacion.objects(alumno = alumno_id, prueba = prueba.id).first()
+            if evaluacion == None:
+               pruebas_no_respondidas.append(prueba)
+        return Prueba.list_to_dict(pruebas_no_respondidas)
+        #evaluaciones = Evaluacion.objects() 

@@ -63,3 +63,10 @@ class Prueba(gj.Document):
         prueba.cantidad_preguntas = len(lista)
         prueba.save()
         return "preguntas cargadas"
+    
+    @classmethod
+    def list_to_dict(cls,lista):
+        result_list=[]
+        for element in lista:
+            result_list.append(element.to_dict())
+        return result_list
