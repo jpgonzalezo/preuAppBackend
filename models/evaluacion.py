@@ -88,8 +88,8 @@ class Evaluacion(gj.Document):
 
     @classmethod
     def get_pruebas_no_respondidas(cls, alumno_id, asignatura_id):
-        ensayos= Prueba.objects(asignatura = asignatura_id, visble = True, tipo = 'ENSAYO').all()
-        talleres= Prueba.objects(asignatura = asignatura_id, visble = True, tipo = 'TALLER').all()
+        ensayos= Prueba.objects(asignatura = asignatura_id, visible = True, tipo = 'ENSAYO').all()
+        talleres= Prueba.objects(asignatura = asignatura_id, visible = True, tipo = 'TALLER').all()
         pruebas = list(ensayos) + list(talleres)
         
         pruebas_no_respondidas = []
