@@ -42,7 +42,7 @@ class PruebaRegistrarEvaluaciones(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(PruebaRegistrarEvaluaciones, self).__init__()
-    
+    #TODO:revisar logica
     def post(self,id):  
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
@@ -440,6 +440,14 @@ class PruebaItem(Resource):
         prueba.activo = False
         prueba.save()
         return {'Response':'borrado'}
+
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        return {'Response':Prueba.update_visible(id)}
 
 class Pruebas(Resource):
     def __init__(self):

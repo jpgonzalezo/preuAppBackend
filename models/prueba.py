@@ -20,6 +20,7 @@ class Prueba(gj.Document):
     preguntas = db.ListField(db.EmbeddedDocumentField(Pregunta))
     topicos = db.ListField(db.ReferenceField(Topico))
     tipo = db.StringField(choices=TIPOS_PRUEBA)
+    visible = db.BooleanField(default=False) 
     activo = db.BooleanField(default=True)
     puntaje_base = db.IntField(default=0)
     meta = {'strict': False}
@@ -55,10 +56,25 @@ class Prueba(gj.Document):
             "puntaje_base": self.puntaje_base
         }
 
+    #TODO: validar que id de la prueba
     @classmethod    
-    def load_preguntas(cls,lista, prueba_id):
+    def load_preguntas(cls, lista, prueba_id):
         prueba =  Prueba.objects(id=prueba_id).first()
-        prueba.preguntas = Pregunta.create_from_excel(lista,prueba.asignatura)
+        prueba.preguntas = Pregunta.create_from_excel(lista)
         prueba.cantidad_preguntas = len(lista)
         prueba.save()
         return "preguntas cargadas"
+    
+    @classmethod
+    def list_to_dict(cls,lista):
+        result_list=[]
+        for element in lista:
+            result_list.append(element.to_dict())
+        return result_list
+
+    @classmethod
+    def update_visible(cls, id_prueba):
+        prueba = Prueba.objects(id = id_prueba).first()
+        prueba.visible = not prueba.visible
+        prueba.save()
+        return "Campo visible actualizado"

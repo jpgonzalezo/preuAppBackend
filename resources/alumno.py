@@ -405,6 +405,7 @@ class AlumnoExcel(Resource):
     def get(self):
         return Alumno.create_layout_excel()
 
+    #TODO: añadir validaciones: si no viene el archivo
     def post(self):
         file = request.files["file"]
         lista = excel_read(file)
