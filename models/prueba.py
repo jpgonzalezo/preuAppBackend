@@ -20,6 +20,7 @@ class Prueba(gj.Document):
     preguntas = db.ListField(db.EmbeddedDocumentField(Pregunta))
     topicos = db.ListField(db.ReferenceField(Topico))
     tipo = db.StringField(choices=TIPOS_PRUEBA)
+    visible = db.BooleanField(default=False) 
     activo = db.BooleanField(default=True)
     puntaje_base = db.IntField(default=0)
     meta = {'strict': False}
@@ -70,3 +71,10 @@ class Prueba(gj.Document):
         for element in lista:
             result_list.append(element.to_dict())
         return result_list
+
+    @classmethod
+    def update_visible(cls, id_prueba):
+        prueba = Prueba.objects(id = id_prueba).first()
+        prueba.visible = not prueba.visible
+        prueba.save()
+        return "Campo visible actualizado"

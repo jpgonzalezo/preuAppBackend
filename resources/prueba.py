@@ -441,6 +441,14 @@ class PruebaItem(Resource):
         prueba.save()
         return {'Response':'borrado'}
 
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        return {'Response':Prueba.update_visible(id)}
+
 class Pruebas(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
