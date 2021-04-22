@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, jsonify, request
 from models.anotacion import Anotacion
+from models.observacion import ObservacionProfesor
 from models.alumno import Alumno
 from models.profesor import Profesor
 from models.administrador import Administrador
@@ -39,15 +40,12 @@ class AnotacionesProfesor(Resource):
     def get(self,id):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
-        alumno = Alumno.load_from_token(token)
-        apoderado = Apoderado.load_from_token(token)
         administrador = Administrador.load_from_token(token)
-        profesor = Profesor.load_from_token(token)
-        if alumno == None and apoderado == None and administrador == None and profesor == None:
+        profesor = Profesor.objects(id=id).first()
+        if administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         response = []
-        profesor = Profesor.objects(id=id).first()
-        for anotacion in Anotacion.objects(profesor=profesor.id).all():
+        for anotacion in ObservacionProfesor.objects(profesor=profesor.id).all():
             response.append(anotacion.to_dict())
         return response
 

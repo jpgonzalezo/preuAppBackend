@@ -22,7 +22,7 @@ from models.comuna import Comuna
 from models.topico import Topico
 from models.prueba import Prueba
 from models.alerta import Alerta
-from models.observacion import Observacion
+from models.observacion import Observacion,ObservacionProfesor
 from models.asistencia import Asistencia
 from models.justificacion import Justificacion
 from models.anotacion import Anotacion
@@ -161,8 +161,8 @@ def add_views(admin):
     admin.add_view(ModelView(Prueba, "Pruebas", category="Evaluacion"))
     admin.add_view(ModelView(Colegio, "Colegios"))
     admin.add_view(ModelView(Alerta, "Alertas"))
-    admin.add_view(ModelView(Observacion, "Observaciones"))
-    admin.add_view(ModelView(Anotacion, "Anotaciones"))
+    admin.add_view(ModelView(Observacion, "Observaciones Alumnos",category="Observaciones"))
+    admin.add_view(ModelView(ObservacionProfesor, "Observaciones Profesor",category="Observaciones"))
     admin.add_view(ModelView(Evento, "Eventos",category="Eventos"))
     admin.add_view(ModelView(Asistencia, "Asistencias", category="Asistencia y justificaciones"))
     admin.add_view(ModelView(Justificacion, "Justificaciones", category="Asistencia y justificaciones"))

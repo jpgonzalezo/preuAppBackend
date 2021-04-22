@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint, jsonify, request
-from models.observacion import Observacion
+from models.observacion import Observacion, ObservacionProfesor
 from models.alumno import Alumno
 from models.administrador import Administrador
 from models.apoderado import Apoderado
@@ -14,6 +14,7 @@ def init_module(api):
     api.add_resource(ObservacionItem, '/observacion/<id>')
     api.add_resource(Observaciones, '/observaciones')
     api.add_resource(ObservacionAlumno, '/observaciones_alumno/<id>/<tipo>')
+    api.add_resource(ObservacionProfesor_, '/observaciones/profesor/<id_profesor>')
 
 
 class ObservacionItem(Resource):
@@ -84,3 +85,29 @@ class Observaciones(Resource):
         observacion.alumno = Alumno.objects(id=data['alumno']).first()
         observacion.save()
         return {'Response': 'exito'}
+
+class ObservacionProfesor_(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(ObservacionProfesor_, self).__init__()
+    
+    def post(self,id_profesor):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        profesor = Profesor.objects(id=id_profesor).first()
+        if alumno == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        observacion = ObservacionProfesor()
+        observacion.titulo = data['titulo']
+        observacion.contenido = data['contenido']
+        observacion.anonimo = data['tipo']
+
+        observacion.alumno = alumno.id
+        observacion.profesor = profesor.id
+        observacion.save()
+        return {'Response': 'exito'}
+    
