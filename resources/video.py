@@ -17,10 +17,21 @@ from flask_restful import reqparse
 
 
 def init_module(api):
+    api.add_resource(Videos, '/videos')
     api.add_resource(VideoCursoAsignatura, '/video')
+    api.add_resource(VideoAsignatura, '/videoAsignatura')
     api.add_resource(VideoItem, '/video/<video_id>')
 
 
+class Videos(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            'auth-token', type=str, required=True, location='headers')
+        super(Videos, self).__init__()
+
+    def get(self):
+        return Video.get_all()
 
 class VideoCursoAsignatura(Resource):
     def __init__(self):
@@ -39,6 +50,20 @@ class VideoCursoAsignatura(Resource):
         curso_id = request.args.get('curso_id')
         return Video.get_all_by_asignatura_and_curso(asignatura_id, curso_id)
 
+class VideoAsignatura(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument(
+            'auth-token', type=str, required=True, location='headers')
+        super(VideoAsignatura, self).__init__()
+
+    def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
+        return Video.get_all_by_asignatura(profesor.asignatura.id)
 
 class VideoItem(Resource):
     def __init__(self):

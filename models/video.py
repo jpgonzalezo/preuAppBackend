@@ -42,6 +42,22 @@ class Video(gj.Document):
         return video.to_dict()
 
     @classmethod
+    def get_all(cls):
+        videos = Video.objects().all()
+        result_list = []
+        for video in videos:
+            result_list.append(video.to_dict())
+        return result_list
+
+    @classmethod
+    def get_all_by_asignatura(cls, asignatura_id):
+        videos = Video.objects(asignatura=asignatura_id).all()
+        result_list = []
+        for video in videos:
+            result_list.append(video.to_dict())
+        return result_list
+
+    @classmethod
     def get_all_by_asignatura_and_curso(cls, asignatura_id, curso_id):
         videos = Video.objects(asignatura=asignatura_id, curso=curso_id).all()
         result_list = []
