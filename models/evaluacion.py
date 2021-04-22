@@ -40,7 +40,8 @@ class Evaluacion(gj.Document):
         listado_respuestas = body["respuestas"]
         prueba = Prueba.objects(id=prueba_id).first()
         alumno = Alumno.objects(id=alumno_id).first()
-
+        print(prueba_id)
+        print("prueba: ",prueba)
         evaluacion = Evaluacion()
         cantidad_buenas = 0
         cantidad_malas = 0
