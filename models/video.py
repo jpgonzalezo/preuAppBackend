@@ -13,7 +13,7 @@ class Video(gj.Document):
     uri = db.StringField(verbose_name="Uri", max_length=200)
     asignatura = db.ReferenceField(Asignatura)
     curso = db.ReferenceField(Curso)
-
+    fecha = db.DateTimeField(default=datetime.now)
     meta = {'strict': False}
 
     def __str__(self):
@@ -25,7 +25,8 @@ class Video(gj.Document):
             "nombre": self.nombre,
             "uri": self.uri,
             "asignatura": self.asignatura.to_dict(),
-            "curso": self.curso.to_dict()
+            "curso": self.curso.to_dict(),
+            "fecha": self.fecha.strftime("%m/%d/%Y, %H:%M:%S")
         }
 
     # literal los class method son los services en java
