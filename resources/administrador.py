@@ -53,6 +53,31 @@ class AdministradorItem(Resource):
         administrador.activo = False
         administrador.save()
         return{'Response':'borrado'}
+    
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        administrador = Administrador.load_from_token(token)
+        administrador_editar = Administrador.objects(id=id).first()
+        if administrador == None and administrador_editar == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        administrador_editar.nombres = data['nombres']
+        administrador_editar.apellido_paterno = data['apellido_paterno']
+        administrador_editar.apellido_materno = data['apellido_materno']
+        administrador_editar.telefono = data['telefono']
+        administrador_editar.email = data['email']
+        administrador_editar.rut = data['rut']
+        direccion = Direccion(calle=data['calle'],
+                numero=data['numero'],
+                comuna=data['comuna'],
+                cas_dep_of=data['cas_dep_of'])
+        administrador_editar.direccion = direccion
+        administrador_editar.save()
+        return {'Response': 'exito',
+                'id': str(administrador_editar.id)}
+
 
 
 class Administradores(Resource):

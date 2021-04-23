@@ -39,7 +39,8 @@ class Administrador(gj.Document):
             "email": self.email,
             "telefono": self.telefono,
             "rut": self.rut,
-            "imagen": self.imagen
+            "imagen": self.imagen,
+            "direccion": self.direccion.to_dict()
         }
     
     def encrypt_password(self, password_to_encrypt):
