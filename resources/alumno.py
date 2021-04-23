@@ -287,6 +287,42 @@ class AlumnoItem(Resource):
         self.reqparse = reqparse.RequestParser()
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(AlumnoItem, self).__init__()
+    
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.objects(id=id).first()
+        administrador = Administrador.load_from_token(token)
+        if alumno == None and administrador == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        alumno.nombres = data['nombres']
+        alumno.apellido_paterno = data['apellido_paterno']
+        alumno.apellido_materno = data['apellido_materno']
+        alumno.telefono = data['telefono']
+        alumno.email = data['email']
+        alumno.encrypt_password(data['rut'])
+        alumno.sexo = data['sexo']
+        alumno.rut = data['rut']
+        alumno.puntaje_ingreso = data['puntaje_ingreso']
+        direccion = Direccion(calle=data['calle'],
+                              numero=data['numero'],
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
+        alumno.direccion = direccion
+        colegio = Colegio.objects(id=data['colegio']).first()
+        curso = Curso.objects(id=data['curso']).first()
+        alumno.colegio = colegio
+        alumno.curso = curso
+        alumno.save()
+        colegio.updateCantEstudiantes()
+        curso.updateCantEstudiantes()
+        colegio.save()
+        curso.save()
+        return {'Response': 'exito',
+                'id': str(alumno.id)}
+
     def get(self,id):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
