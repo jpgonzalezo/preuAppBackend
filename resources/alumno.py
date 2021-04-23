@@ -302,7 +302,6 @@ class AlumnoItem(Resource):
         alumno.apellido_materno = data['apellido_materno']
         alumno.telefono = data['telefono']
         alumno.email = data['email']
-        alumno.encrypt_password(data['rut'])
         alumno.sexo = data['sexo']
         alumno.rut = data['rut']
         alumno.puntaje_ingreso = data['puntaje_ingreso']
