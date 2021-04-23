@@ -94,6 +94,32 @@ class ProfesorItem(Resource):
         profesor.activo = False
         profesor.save()
         return{'Response':'borrado'}
+    
+    def put(self,id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.objects(id=id).first()
+        if administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        profesor.nombres = data['nombres']
+        profesor.apellido_paterno = data['apellido_paterno']
+        profesor.apellido_materno = data['apellido_materno']
+        profesor.telefono = data['telefono']
+        profesor.email = data['email']
+        profesor.rut = data['rut']
+        direccion = Direccion(calle=data['calle'],
+                              numero=data['numero'],
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
+        profesor.direccion = direccion
+        asignatura = Asignatura.objects(id=data['asignatura']).first()
+        profesor.asignatura = asignatura.id
+        profesor.save()
+        return {'Response': 'exito',
+                'id': str(profesor.id)}
 
 class Profesores(Resource):
     def __init__(self):

@@ -50,6 +50,39 @@ class ApoderadoItem(Resource):
         apoderado.activo = False
         apoderado.save()
         return{'Response':'borrado'}
+    
+    def put(self, id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        apoderado = Apoderado.objects(id=id).first()
+        administrador = Administrador.load_from_token(token)
+        if apoderado == None and administrador == None:
+            return {'response': 'user_invalid'},401
+        data = request.data.decode()
+        data = json.loads(data)
+        apoderado.nombres = data['nombres']
+        apoderado.apellido_paterno = data['apellido_paterno']
+        apoderado.apellido_materno = data['apellido_materno']
+        apoderado.telefono = data['telefono']
+        apoderado.email = data['email']
+        apoderado.rut = data['rut']
+        direccion = Direccion(calle=data['calle'],
+                              numero=data['numero'],
+                              comuna=data['comuna'],
+                              cas_dep_of=data['cas_dep_of'])
+        apoderado.direccion = direccion
+
+        #Asignar alumno
+        alumno = Alumno.objects(rut=data['rut_alumno']).first()
+        if alumno == None:
+            return {'Response':'not_alumno'}
+        else:
+            apoderado.alumno = alumno
+        
+
+        apoderado.save()
+        return {'Response': 'exito',
+                'id': str(apoderado.id)}
 
 
 class Apoderados(Resource):

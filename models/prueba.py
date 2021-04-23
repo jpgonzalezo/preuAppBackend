@@ -53,7 +53,8 @@ class Prueba(gj.Document):
             "tipo": self.tipo,
             "topicos": topicos,
             "preguntas": preguntas,
-            "puntaje_base": self.puntaje_base
+            "puntaje_base": self.puntaje_base,
+            "visible": self.visible
         }
 
     #TODO: validar que id de la prueba
