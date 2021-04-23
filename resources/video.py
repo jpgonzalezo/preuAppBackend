@@ -46,9 +46,13 @@ class VideoCursoAsignatura(Resource):
         return Video.create(body)
 
     def get(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        if alumno == None:
+            return {'response': 'user_invalid'},401
         asignatura_id = request.args.get('asignatura_id')
-        curso_id = request.args.get('curso_id')
-        return Video.get_all_by_asignatura_and_curso(asignatura_id, curso_id)
+        return Video.get_all_by_asignatura_and_curso(asignatura_id, alumno.curso.id)
 
 class VideoAsignatura(Resource):
     def __init__(self):
