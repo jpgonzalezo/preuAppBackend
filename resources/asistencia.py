@@ -42,7 +42,7 @@ class AsistenciasAlumnoAsignatura(Resource):
                 asistencias.append(
                     {
                         "id": str(asistencia.id),
-                        "fecha": str(asistencia.fecha),
+                        "fecha": asistencia.fecha.strftime("%m/%d/%Y %H:%M:%S"),
                         "presente": True,
                         "justificacion": "Sin justificación"
                     }
@@ -53,7 +53,7 @@ class AsistenciasAlumnoAsignatura(Resource):
                     justificacion = Justificacion.objects(asistencia=asistencia,alumno=alumno).first().causa
                 asistencias.append({
                     "id": str(asistencia.id),
-                    "fecha": str(asistencia.fecha),
+                    "fecha": asistencia.fecha.strftime("%m/%d/%Y %H:%M:%S"),
                     "presente": False,
                     "justificacion": justificacion
                 })
@@ -166,7 +166,6 @@ class AsistenciaFecha(Resource):
             return {'response': 'user_invalid'},401
         response = []
         for asistencia in Asistencia.objects(fecha=fecha).all():
-            print(asistencia.fecha)
             response.append(asistencia.to_dict())
         return response
 

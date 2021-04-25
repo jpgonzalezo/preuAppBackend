@@ -11,15 +11,6 @@ class Asistencia(db.Document):
     alumnos_presentes = db.ListField(db.ReferenceField(Alumno))
     alumnos_ausentes = db.ListField(db.ReferenceField(Alumno))
 
-    def getFecha(self):
-        mes = str(self.fecha.month)
-        dia = str(self.fecha.day)
-        if len(str(self.fecha.month)) is 1:
-            mes = "0"+str(self.fecha.month)
-        if len(str(self.fecha.day)) is 1:
-            dia = "0"+str(self.fecha.day)
-        return str(self.fecha.year)+"-"+mes+"-"+dia+" "+str(self.fecha.hour)+":"+str(self.fecha.minute)+":"+str(self.fecha.second)
-
     def to_dict_short(self):
         return{
             "id": str(self.id),
@@ -27,7 +18,7 @@ class Asistencia(db.Document):
             "alumnos_presentes" : len(self.alumnos_presentes),
             "alumnos_ausentes" : len(self.alumnos_ausentes),
             "curso": self.curso.nombre,
-            "fecha": self.getFecha()
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S"),
         }
 
     def to_dict(self):
@@ -49,5 +40,5 @@ class Asistencia(db.Document):
             "alumnos_presentes" : alumnos_presentes,
             "alumnos_ausentes" : alumnos_ausentes,
             "curso": self.curso.to_dict(),
-            "fecha": self.getFecha()
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
         }

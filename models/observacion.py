@@ -24,6 +24,17 @@ class Observacion(gj.Document):
     alumno = db.ReferenceField(Alumno)
     fecha = db.DateTimeField(default=datetime.now)
 
+    def to_dict(self):
+        return{
+            "id": str(self.id),
+            "titulo": self.titulo,
+            "contenido": self.contenido,
+            "tipo": self.tipo,
+            "nombre_personal": self.nombre_personal,
+            "alumno": self.alumno.to_dict(),
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+        }
+
 class ObservacionProfesor(gj.Document):
     titulo = db.StringField(max_length=30)
     contenido = db.StringField(max_length=200)
@@ -40,5 +51,5 @@ class ObservacionProfesor(gj.Document):
             "anonimo": self.anonimo,
             "alumno": self.alumno.to_dict(),
             "profesor": self.profesor.to_dict(),
-            "fecha": str(self.fecha)
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
         }

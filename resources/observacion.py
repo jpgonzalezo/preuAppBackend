@@ -47,7 +47,11 @@ class ObservacionAlumno(Resource):
         profesor = Profesor.load_from_token(token)
         if alumno == None and apoderado == None and administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
-        return json.loads(Observacion.objects(alumno=id,tipo=tipo).all().to_json())
+        response = []
+        observaciones = Observacion.objects(alumno=id,tipo=tipo).all()
+        for observacion in observaciones:
+            response.append(observacion.to_dict())
+        return response
 
 class Observaciones(Resource):
     def __init__(self):

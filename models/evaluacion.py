@@ -29,7 +29,7 @@ class Evaluacion(gj.Document):
             "cantidad_malas": self.cantidad_malas,
             "cantidad_omitidas": self.cantidad_omitidas,
             "puntaje": self.puntaje,
-            "fecha": str(self.fecha),
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S"),
             "respuestas": respuestas
         }
 

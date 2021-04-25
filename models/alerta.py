@@ -16,21 +16,12 @@ class Alerta(db.Document):
     fecha = db.DateTimeField(default=datetime.now)
     historial = db.ListField(db.EmbeddedDocumentField(Historial))
 
-    def getFecha(self):
-        mes = str(self.fecha.month)
-        dia = str(self.fecha.day)
-        if len(str(self.fecha.month)) is 1:
-            mes = "0"+str(self.fecha.month)
-        if len(str(self.fecha.day)) is 1:
-            dia = "0"+str(self.fecha.day)
-        return str(self.fecha.year)+"-"+mes+"-"+dia+" "+str(self.fecha.hour)+":"+str(self.fecha.minute)+":"+str(self.fecha.second)
-
     def to_dict(self):
         return {
             "id": str(self.id),
             "alumno": self.alumno.to_dict(),
             "data": self.data,
-            "fecha": self.getFecha(),
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S"),
             "tipo": self.tipo,
             "asignatura": self.asignatura.to_dict()
         }

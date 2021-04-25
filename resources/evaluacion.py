@@ -123,7 +123,7 @@ class EvaluacionRegistroFilas(Resource):
             return {'response': 'user_invalid'},401
         evaluacion = Evaluacion.objects(id=id_evaluacion).first()
         rowsData = []
-        rowsData.append({ 'id':str(evaluacion.alumno.id),'nombres': evaluacion.alumno.nombres, 'apellido_paterno': evaluacion.alumno.apellido_paterno, 'apellido_materno': evaluacion.alumno.apellido_materno})
+        rowsData.append({ 'id':str(evaluacion.alumno.id),'nombres': evaluacion.alumno.nombres, 'apellido_paterno': evaluacion.alumno.apellido_paterno, 'apellido_materno': evaluacion.alumno.apellido_materno, 'rut': evaluacion.alumno.rut})
         for row in rowsData:
             for respuesta in evaluacion.respuestas:
                 if evaluacion.prueba.tipo != "TAREA":
@@ -225,6 +225,7 @@ class EvaluacionPruebaRegistroColumnas(Resource):
         columnDefs.append({'headerName':'Nombres','field':'nombres','sortable':True})
         columnDefs.append({'headerName':'Apellido Paterno','field':'apellido_paterno','sortable':True})
         columnDefs.append({'headerName':'Apellido Materno','field':'apellido_materno','sortable':True})
+        columnDefs.append({'headerName':'Rut','field':'rut','sortable':True})
         prueba = Prueba.objects(id=id_prueba).first()
         for pregunta in prueba.preguntas:
             if prueba.tipo == "ENSAYO" or prueba.tipo == "TALLER":
@@ -253,7 +254,7 @@ class EvaluacionPruebaRegistro(Resource):
         curso = Curso.objects(id=id_curso).first()
         for alumno in Alumno.objects(curso=curso,activo=True).all():
             if Evaluacion.objects(prueba=prueba,alumno=alumno).first() == None:
-                rowsData.append({ 'id':str(alumno.id),'nombres': alumno.nombres, 'apellido_paterno': alumno.apellido_paterno, 'apellido_materno': alumno.apellido_materno})
+                rowsData.append({ 'id':str(alumno.id),'nombres': alumno.nombres, 'apellido_paterno': alumno.apellido_paterno, 'apellido_materno': alumno.apellido_materno, 'rut': alumno.rut})
         for row in rowsData:
             for pregunta in prueba.preguntas:
                 row[str(pregunta.numero_pregunta)] = ""
