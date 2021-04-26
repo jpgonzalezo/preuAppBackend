@@ -17,7 +17,7 @@ from flask_restful import reqparse
 
 def init_module(api):
     api.add_resource(ArchivoAsignatura, '/archivoAsignatura/<asignatura_id>')
-    api.add_resource(ArchivoItem, '/archivo/<archivo_id>')
+    api.add_resource(ArchivoItem, '/archivos','/archivo/<archivo_id>')
     api.add_resource(ArchivoEnExcel, '/archivoExcel')
 
 
@@ -41,8 +41,11 @@ class ArchivoItem(Resource):
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(ArchivoItem, self).__init__()
 
-    def get(self,archivo_id):
-        return Archivo.download(archivo_id)
+    def get(self,archivo_id = None):
+        if archivo_id:
+            return Archivo.download(archivo_id)
+        else:
+            return Archivo.get_all()
     
     def delete(self, archivo_id):
         

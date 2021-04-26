@@ -65,3 +65,11 @@ class Archivo(gj.Document):
         except Exception as e:
             print(str(e))
             return "No se pudo eliminar el archivo"
+    
+    @classmethod
+    def get_all(cls):
+        archivos = Archivo.objects().all()
+        result_list = []
+        for archivo in archivos:
+            result_list.append(archivo.to_dict())
+        return result_list
