@@ -30,7 +30,7 @@ class Archivo(gj.Document):
     @classmethod
     def upload(cls, base_path, new_file, asignatura_id):
         asignatura = Asignatura.objects(id=asignatura_id).first()
-        folder = base_path + asignatura_id
+        folder = base_path + str(asignatura['id'])
         if not os.path.exists(folder):
             os.mkdir(folder)
         file_name = secure_filename(new_file.filename)
