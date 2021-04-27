@@ -16,7 +16,7 @@ import calendar
 from flask_restful import reqparse
 
 def init_module(api):
-    api.add_resource(ArchivoAsignatura,'/archivoAsignatura', '/archivoAsignatura/<asignatura_id>')
+    api.add_resource(ArchivoAsignatura,'/archivoAsignatura')
     api.add_resource(ArchivoItem, '/archivos','/archivo/<archivo_id>')
     api.add_resource(ArchivoEnExcel, '/archivoExcel')
 
@@ -28,12 +28,17 @@ class ArchivoAsignatura(Resource):
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(ArchivoAsignatura, self).__init__()
 
-    def post(self,asignatura_id):
+    def post(self):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        profesor = Profesor.load_from_token(token)
+        if profesor == None:
+            return {'response': 'user_invalid'},401
         if 'file' not in request.files:
             return {'Response':"error"}
         file = request.files["file"]
         #Archivo.upload(current_app.config.get("BASE_PATH"), file, asignatura_id)
-        return {'Response':Archivo.upload(current_app.config.get("BASE_PATH"), file, asignatura_id)}
+        return {'Response':Archivo.upload(current_app.config.get("BASE_PATH"), file, profesor.asignatura.id)}
 
     def get(self):
         args = self.reqparse.parse_args()
