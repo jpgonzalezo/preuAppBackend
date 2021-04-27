@@ -29,8 +29,11 @@ class ArchivoAsignatura(Resource):
         super(ArchivoAsignatura, self).__init__()
 
     def post(self,asignatura_id):
+        if 'file' not in request.files:
+            return {'Response':"error"}
         file = request.files["file"]
-        return {'Response': Archivo.upload(current_app.config.get("BASE_PATH"), file , asignatura_id)}
+        #Archivo.upload(current_app.config.get("BASE_PATH"), file, asignatura_id)
+        return {'Response':Archivo.upload(current_app.config.get("BASE_PATH"), file, asignatura_id)}
 
     def get(self, asignatura_id):
         return Archivo.get_all_by_asignatura(asignatura_id)
