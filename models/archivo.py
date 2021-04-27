@@ -22,7 +22,7 @@ class Archivo(gj.Document):
             "id": str(self.id),
             "nombre": self.nombre,
             "path": self.path,
-            "asignatura": self.asignatura.to_dict()
+            "asignatura": self.asignatura.to_dict(),
             "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
         }
 
