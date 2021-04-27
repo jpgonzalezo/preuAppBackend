@@ -11,7 +11,7 @@ class Archivo(gj.Document):
     nombre = db.StringField(verbose_name="Nombre Archivo", max_length=200)
     path = db.StringField(verbose_name="Path", max_length=200)
     asignatura = db.ReferenceField(Asignatura)
-
+    fecha = db.DateTimeField(default=datetime.now)
     meta = {'strict': False}
 
     def __str__(self):
@@ -23,6 +23,7 @@ class Archivo(gj.Document):
             "nombre": self.nombre,
             "path": self.path,
             "asignatura": self.asignatura.to_dict()
+            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
         }
 
     # literal los class method son los services en java
