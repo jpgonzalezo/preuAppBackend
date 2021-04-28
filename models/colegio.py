@@ -2,6 +2,7 @@ from db import db
 from datetime import datetime
 from models.direccion import Direccion
 import mongoengine_goodjson as gj
+from utils.excel_util import create_workbook as create_excel
 
 class Colegio(gj.Document):
     nombre = db.StringField(verbose_name="Nombre Institucion", max_length=200)
@@ -34,6 +35,12 @@ class Colegio(gj.Document):
                 contador= contador+1
         self.cantidad_estudiantes = contador
         return True
+
+    @classmethod
+    def create_layout_excel(cls):
+        headers = ["Nombre","Calle","Numero","Comuna"]
+        result_list = []
+        return create_excel(result_list, headers, "Formato_colegios")
 
     @classmethod
     def create_from_excel(cls, list_rows):

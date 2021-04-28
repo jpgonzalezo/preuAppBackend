@@ -97,6 +97,9 @@ class ColegiosExcel(Resource):
         self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
         super(ColegiosExcel, self).__init__()
 
+    def get(self):
+        return Colegio.create_layout_excel()
+
     def post(self):
         file = request.files["file"]
         lista = excel_read(file)

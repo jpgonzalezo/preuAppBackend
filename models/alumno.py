@@ -123,7 +123,7 @@ class Alumno(gj.Document):
                                  sexo = alumno[5],
                                  email = alumno[6],
                                  telefono = str(alumno[7]),
-                                 direccion = direccion, colegio = colegio, curso = curso)
+                                 direccion = direccion, colegio = colegio, curso = curso, imagen="default")
             if (alumno[4] != None and alumno[4] != ""):
                 alumnoNuevo.puntaje_ingreso = alumno[4]
             else:

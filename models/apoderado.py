@@ -109,6 +109,6 @@ class Apoderado(gj.Document):
                                        apellido_materno = apoderado[3],
                                        email = apoderado[4],
                                        telefono = str(apoderado[5]),                            
-                                       direccion = direccion, alumno = alumno)
+                                       direccion = direccion, alumno = alumno, imagen="default")
             apoderadoNuevo.save()
         return "hecho"
