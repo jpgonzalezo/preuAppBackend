@@ -45,7 +45,9 @@ class ArchivoAsignatura(Resource):
         token = args.get('auth-token')
         if asignatura_id:
             alumno = Alumno.load_from_token(token)
-            if alumno == None:
+            admin = Administrador.load_from_token(token)
+
+            if alumno == None and admin == None:
                 return {'response': 'user_invalid'},401
             return Archivo.get_all_by_asignatura(asignatura_id)
         else:
