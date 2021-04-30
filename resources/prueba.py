@@ -501,5 +501,4 @@ class PruebaPreguntasExcel(Resource):
         profesor = Profesor.load_from_token(token)
         if profesor == None:
            return {'response': 'user_invalid'},401
-        #TODO: cambiar ese id por el que vendrá en el token (profesor.asignatura.id)
         return {'Response': Prueba.load_preguntas(lista, prueba_id)}
