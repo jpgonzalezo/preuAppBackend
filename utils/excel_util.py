@@ -14,6 +14,7 @@ def sheet_Tupla(path):
     result_list.pop(0)
     return result_list
 
+
 def create_workbook(data_list, headers, filename):
     #print (data_list)
     #keys = validate_dict.keys()
@@ -26,7 +27,7 @@ def create_workbook(data_list, headers, filename):
         ws1 = wb.create_sheet("Data"+str(index+1))
         for row in item:
             ws1.append(row)
-    #for element in keys:
+    # for element in keys:
     #    print (validate_dict[element])
     #    data_val = DataValidation(type="list",formula1=validate_dict[element]) #You can change =$A:$A with a smaller range like =A1:A9
     #    ws.add_data_validation(data_val)
@@ -39,6 +40,22 @@ def create_workbook(data_list, headers, filename):
             'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         }
     )
+
+
+def export(data_list, filename):
+    wb = Workbook()
+    ws = wb.active
+    for row in data_list:
+        ws.append(row)
+    return Response(
+        save_virtual_workbook(wb),
+        headers={
+            'Content-Disposition': 'attachment; filename='+filename+'.xlsx',
+            'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    )
+
+
 def map_to_option(list_):
     string_list = ""
     for element in list_:
@@ -47,5 +64,3 @@ def map_to_option(list_):
 
 
 #print (create_workbook({'A': '"Dog,Cat,Bat"', 'C': '"wea1, wea2, wea3"'}))
-
-

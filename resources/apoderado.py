@@ -193,4 +193,8 @@ class ApoderadoExcel(Resource):
     def post(self):
         file = request.files["file"]
         lista = excel_read(file)
-        return {'Response': Apoderado.create_from_excel(lista)}
+        response = Apoderado.create_from_excel(lista)
+        if(response == "hecho"):
+            return {'Response': response}
+        else:
+            return response

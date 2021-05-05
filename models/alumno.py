@@ -8,7 +8,8 @@ from flask_login import UserMixin
 import mongoengine_goodjson as gj
 from utils.excel_util import create_workbook as create_excel
 from utils.excel_util import map_to_option
-
+from utils.excel_util import export as write_error
+from utils.validaciones import validar_rut, es_correo_valido
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                           BadSignature, SignatureExpired)
 from flask import (
@@ -22,13 +23,18 @@ from flask import (
     abort,
     Response,
     jsonify
-    )
+)
 
 TIPOS_SEXOS = [
     ("MASCULINO", "MASCULINO"),
     ("FEMENINO", "FEMENINO"),
     ("NO DEFINIDO", "NO DEFINIDO"),
-    ]
+]
+TIPOS_SEXOS_ARRAY = [
+    "MASCULINO",
+    "FEMENINO",
+    "NO DEFINIDO"
+]
 
 class Alumno(gj.Document):
     nombres = db.StringField()
@@ -66,16 +72,17 @@ class Alumno(gj.Document):
             "rut": self.rut,
             "imagen": self.imagen
         }
-    
+
     def to_excel(self):
-        return [self.rut,self.nombres, self.apellido_paterno, self.apellido_materno]
-    
+        return [self.rut, self.nombres, self.apellido_paterno, self.apellido_materno]
+
     def encrypt_password(self, password_to_encrypt):
-    	self.password = generate_password_hash(password_to_encrypt)
+        self.password = generate_password_hash(password_to_encrypt)
 
     def check_password(self, password_to_check):
         print(check_password_hash(self.password, str(password_to_check)))
         return check_password_hash(self.password, str(password_to_check))
+
     @classmethod
     def get_by_email_or_username(cls, email_or_usernmane):
         text_id = email_or_usernmane.lower()
@@ -87,6 +94,7 @@ class Alumno(gj.Document):
     def get_by_id(cls, user_id):
         return cls.objects(id=user_id).first()
     # token alive 10 hours
+
     def get_token(self, seconds_live=36000):
         token = Serializer(current_app.config.get("TOKEN_KEY"),
                            expires_in=seconds_live)
@@ -109,43 +117,77 @@ class Alumno(gj.Document):
         return None
 
     @classmethod
-    #TODO: validar que vengan los id foraneos, el rut y correo con formato correo
+    # TODO: validar que vengan los id foraneos, el rut y correo con formato correo
     def create_from_excel(cls, list_rows):
+        error_list = [["RUN", "Nombres", "Apellido Paterno", "Apellido Materno", "Puntaje Ingreso", "Sexo",
+                       "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "Id. Curso", "Id. Colegio", "Error"]]
         for alumno in list_rows:
-            curso = Curso.objects(id = alumno[13]).first()
-            colegio = Colegio.objects(id = alumno[14]).first()
-            ##TODO: incorporar villa y depto en la posición 11 y 12. Devolver los q no se pudieron crear
-            direccion = Direccion(calle = alumno[8], numero = str(alumno[9]), comuna = alumno[10])
-            alumnoNuevo = Alumno(rut =str(alumno[0]),
-                                 nombres = alumno[1],
-                                 apellido_paterno = alumno[2],
-                                 apellido_materno = alumno[3],
-                                 sexo = alumno[5],
-                                 email = alumno[6],
-                                 telefono = str(alumno[7]),
-                                 direccion = direccion, colegio = colegio, curso = curso, imagen="default")
-            if (alumno[4] != None and alumno[4] != ""):
-                alumnoNuevo.puntaje_ingreso = alumno[4]
+            alumno = list(alumno)
+            rut = str(alumno[0])
+            if(rut != "None" and validar_rut(rut)):
+                try:
+                    curso = Curso.objects(id=alumno[12]).first()
+                    if(curso == None):
+                        alumno.append("Curso no existe")
+                        error_list.append(alumno)
+                        continue
+                except:
+                    alumno.append("Id de curso no es valido")
+                    error_list.append(alumno)
+                    continue
+
+                try:
+                    colegio = Colegio.objects(id=alumno[13]).first()
+                    if(colegio == None):
+                        alumno.append("Colegio no existe")
+                        error_list.append(alumno)
+                        continue
+                except:
+                    alumno.append("Id de colegio no es valido")
+                    error_list.append(alumno)
+                    continue
+
+                if( alumno[5] == "None" or not(alumno[5] in TIPOS_SEXOS_ARRAY)):
+                    alumno.append("Sexo ingresado no es valido")
+                    error_list.append(alumno)
+                    continue
+                if( alumno[6] == "None" or not(es_correo_valido(alumno[6]))):
+                    alumno.append("Correo ingresado no es valido")
+                    error_list.append(alumno)
+                    continue
+
+                direccion = Direccion(calle=alumno[8], numero=str(alumno[9]), comuna=alumno[10], cas_dep_of=alumno[11])
+                alumnoNuevo = Alumno(rut=str(alumno[0]),
+                                     nombres=alumno[1],
+                                     apellido_paterno=alumno[2],
+                                     apellido_materno=alumno[3],
+                                     sexo=alumno[5],
+                                     email=alumno[6],
+                                     telefono=str(alumno[7]),
+                                     direccion=direccion, colegio=colegio, curso=curso, imagen="default")
+                if (alumno[4] != None and alumno[4] != ""):
+                    alumnoNuevo.puntaje_ingreso = alumno[4]
+                else:
+                    alumnoNuevo.puntaje_ingreso = 0
+                alumnoNuevo.save()
             else:
-                alumnoNuevo.puntaje_ingreso = 0
-            alumnoNuevo.save()
+                alumno.append("RUT invalido")
+                error_list.append(alumno)
+        if(len(error_list) > 1):
+            return write_error(error_list, "errores")
         return "hecho"
 
     @classmethod
     def create_layout_excel(cls):
-        headers = ["RUN","Nombres","Apellido Paterno","Apellido Materno","Puntaje Ingreso","Sexo","Email","Telefono","Calle","Numero","Comuna","Villa","Depto","Id. Curso","Id. Colegio"]
-        result_list = [Colegio.export_to_excel(),Curso.export_to_excel()]
+        headers = ["RUN", "Nombres", "Apellido Paterno", "Apellido Materno", "Puntaje Ingreso", "Sexo (MASCULINO/FEMENINO/NO DEFINIDO)",
+                   "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "Id. Curso", "Id. Colegio"]
+        result_list = [Colegio.export_to_excel(), Curso.export_to_excel()]
         return create_excel(result_list, headers, "Formato_alumnos")
 
     @classmethod
     def export_to_excel(cls):
-        alumnos= Alumno.objects().all()
-        result_list_alumnos=[["RUN", "Nombres", "Apellido Paterno", "Apellido Materno"]]
+        alumnos = Alumno.objects().all()
+        result_list_alumnos = [["RUN", "Nombres", "Apellido Paterno", "Apellido Materno"]]
         for alumno in alumnos:
             result_list_alumnos.append(alumno.to_excel())
         return result_list_alumnos
-
-
-
-
-    

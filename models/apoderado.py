@@ -20,6 +20,8 @@ from flask import (
     jsonify
     )
 from utils.excel_util import create_workbook as create_excel
+from utils.validaciones import validar_rut, es_correo_valido
+from utils.excel_util import export as write_error
 
 class Apoderado(gj.Document):
     nombres = db.StringField()
@@ -92,23 +94,49 @@ class Apoderado(gj.Document):
 
     @classmethod
     def create_layout_excel(cls):
-        headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa", "Depto", "RUN Alumno"]
+        headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno"]
         result_list = [Alumno.export_to_excel()]
         return create_excel(result_list, headers, "Formato_apoderados")
 
     #TODO: validar que el rut del alumno sea valido, el rut apoderado y correo con formato correo
     @classmethod
     def create_from_excel(cls, list_rows):
+        error_list = [["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno", "Error"]]
         for apoderado in list_rows:
-            alumno = Alumno.objects(rut = str(apoderado[11])).first()
-            ##TODO: incorporar villa y depto en la posición 9 y 10
-            direccion = Direccion(calle = apoderado[6], numero = str(apoderado[7]), comuna = apoderado[8])
-            apoderadoNuevo = Apoderado(rut =str(apoderado[0]),
+            apoderado = list(apoderado)
+            print(apoderado)
+            rut = str(apoderado[0])
+            if(rut != "None" and validar_rut(rut)):
+
+                rut_alumno = str(apoderado[10])
+                if(rut_alumno != "None" and validar_rut(rut_alumno)):
+                    alumno = Alumno.objects(rut = str(rut_alumno)).first()
+                    if(alumno == None):
+                        apoderado.append("Alumno no existe")
+                        error_list.append(apoderado)
+                        continue
+                else:
+                    apoderado.append("RUT del alumno no es valido")
+                    error_list.append(apoderado)
+                    continue
+
+                if( apoderado[4] == "None" or not(es_correo_valido(apoderado[4]))):
+                    apoderado.append("Correo ingresado no es valido")
+                    error_list.append(apoderado)
+                    continue
+
+                direccion = Direccion(calle = apoderado[6], numero = str(apoderado[7]), comuna = apoderado[8], cas_dep_of=apoderado[9])
+                apoderadoNuevo = Apoderado(rut =str(apoderado[0]),
                                        nombres = apoderado[1],
                                        apellido_paterno = apoderado[2],
                                        apellido_materno = apoderado[3],
                                        email = apoderado[4],
                                        telefono = str(apoderado[5]),                            
                                        direccion = direccion, alumno = alumno, imagen="default")
-            apoderadoNuevo.save()
+                apoderadoNuevo.save()
+            else:
+                apoderado.append("RUT invalido")
+                error_list.append(apoderado)
+        if(len(error_list) > 1):
+            return write_error(error_list, "errores")
         return "hecho"
