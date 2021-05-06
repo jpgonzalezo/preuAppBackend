@@ -501,4 +501,4 @@ class PruebaPreguntasExcel(Resource):
         profesor = Profesor.load_from_token(token)
         if profesor == None:
            return {'response': 'user_invalid'},401
-        return {'Response': Prueba.load_preguntas(lista, prueba_id)}
+        return Prueba.load_preguntas(lista, prueba_id)
