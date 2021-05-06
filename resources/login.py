@@ -7,12 +7,17 @@ from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 from flask_restful import reqparse
+from utils.trata_contrasena import created_random_pass_by_profile as change_pass
+
+
+
 import json
 
 def init_module(api):
     api.add_resource(Login, '/login')
     api.add_resource(Logout, '/logout')
     api.add_resource(CambiarContrasena, '/cambiar_contrasena')
+    api.add_resource(CodigoRecuperacion, '/codigo_recuperacion')
 
 
 class Login(Resource):
@@ -66,6 +71,23 @@ class Logout(Resource):
     def post(self):
         return {'respuesta': True}
 
+class CodigoRecuperacion(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(CodigoRecuperacion, self).__init__()
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        user_mail = data['email']
+        admin = Administrador.get_by_email_or_username(user_mail)
+        alumno = Alumno.get_by_email_or_username(user_mail)
+        apoderado = Apoderado.get_by_email_or_username(user_mail)
+        profesor = Profesor.get_by_email_or_username(user_mail)
+        return change_pass(user_mail,admin,alumno,apoderado,profesor)
+
+
 class CambiarContrasena(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
@@ -92,7 +114,6 @@ class CambiarContrasena(Resource):
             user = administrador
         elif profesor != None:
             user = profesor
-        
         if user ==None:
             return {'message':'invalid_user'}
         #Obtener los campos del formulario de cambio de contraseña
