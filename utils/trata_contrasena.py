@@ -1,20 +1,12 @@
 import random
 import string
-from flask import Flask
-from flask_mail import Mail, Message
-
-app = Flask(__name__)
-
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'soporte2030usach@gmail.com'
-app.config['MAIL_PASSWORD'] = 'soporte.usach2030'
-app.config['MAIL_USE_TLS'] = True
-mail = Mail(app)
+from flask import current_app
+from flask_mail import Message
+from mail import mail
 
 
 def send_message(codigo, email):
-    msg = Message('Hello from the other side!', sender = 'soporte2030usach@gmail.com', recipients = ['luis.migryk@usach.cl',email])
+    msg = Message('Hello from the other side!', sender = current_app.config['MAIL_USERNAME'], recipients = ['luis.migryk@usach.cl',email])
     msg.body = "Hey Cristian, tu codigo de recuperacion es:" + codigo
     mail.send(msg)
     return "Message sent!"
@@ -23,10 +15,30 @@ def send_message(codigo, email):
 def get_random_string(length):
     # With combination of lower and upper case
     result_str = ''.join(random.choice(string.ascii_letters)
-                         for i in range(length))
+        for i in range(length))
     # print random string
     return(result_str)
 
+def validate_code_provisional(admin, alumno, apoderado, profesor):
+    list_codes= []
+    count_profile = 0
+    if (admin != None):
+        list_codes.append(admin.password_provisoria)
+        count_profile += 1
+
+    if (alumno != None):
+        list_codes.append(alumno.password_provisoria)
+        count_profile += 1
+
+    if (apoderado != None):
+        list_codes.append(apoderado.password_provisoria)
+        count_profile += 1
+
+    if (profesor != None):
+        list_codes.append(profesor.password_provisoria)
+        count_profile += 1
+    lista = [count_profile,list_codes]
+    return lista
 
 def created_random_pass_by_profile(user_mail, admin, alumno, apoderado, profesor):
     provisional_pass = get_random_string(8)
@@ -48,4 +60,19 @@ def created_random_pass_by_profile(user_mail, admin, alumno, apoderado, profesor
         count_profile += 1
         profesor.create_provisional_pass(user_mail,provisional_pass)
     return send_message(provisional_pass,user_mail) if count_profile!=0 else False
+
+def change_pass(new_password, admin, alumno, apoderado, profesor):
+    if (admin != None):
+        admin.encrypt_password(new_password)
+        admin.save()
+    if (alumno != None):
+        alumno.encrypt_password(new_password)
+        alumno.save()
+    if (apoderado != None):
+        apoderado.encrypt_password(new_password)
+        apoderado.save()
+    if (profesor != None):
+        profesor.encrypt_password(new_password)
+        profesor.save()
+    return "hecho"
 
