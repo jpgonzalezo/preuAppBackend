@@ -7,7 +7,7 @@ from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 from flask_restful import reqparse
-from utils.trata_contrasena import created_random_pass_by_profile as change_pass
+from utils.trata_contrasena import created_random_pass_by_profile as change_passCodigo
 from utils.trata_contrasena import validate_code_provisional, change_pass
 
 
@@ -87,7 +87,11 @@ class CodigoRecuperacion(Resource):
         alumno = Alumno.get_by_email_or_username(user_mail)
         apoderado = Apoderado.get_by_email_or_username(user_mail)
         profesor = Profesor.get_by_email_or_username(user_mail)
-        return change_pass(user_mail,admin,alumno,apoderado,profesor)
+        result = change_passCodigo(user_mail,admin,alumno,apoderado,profesor)
+        if (result == False):
+            return 'usuario no registrado.', 404
+        else: 
+            return 'correo enviado correctamente a email indicado.', 200
 
 class CambiaContrasenaCodigo(Resource):
     def __init__(self):
@@ -100,7 +104,7 @@ class CambiaContrasenaCodigo(Resource):
         data = json.loads(data)
         user_mail = data['email']
         user_codigo = data['codigo']
-        user_new_pass = data['nueva_contrasena']
+        user_new_pass = data['new_pass']
         admin = Administrador.get_by_email_or_username(user_mail)
         alumno = Alumno.get_by_email_or_username(user_mail)
         apoderado = Apoderado.get_by_email_or_username(user_mail)
@@ -110,10 +114,13 @@ class CambiaContrasenaCodigo(Resource):
             list_codes = lista[1]
             count_profile = lista[0]
             count_equals_code = list_codes.count(user_codigo)
-            return change_pass(user_new_pass, admin, alumno, apoderado, profesor) if count_profile == count_equals_code else 'codigo no coincide'
+            if count_profile == count_equals_code:
+                return change_pass(user_new_pass, admin, alumno, apoderado, profesor), 200
+            else: 
+                return 'Código ingresado invalido', 404
 
         else:
-            return ("Tu correo no existe")
+            return "Usuario no encontrado", 404
         #return change_pass(user_mail,admin,alumno,apoderado,profesor)
 
 

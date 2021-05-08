@@ -6,8 +6,8 @@ from mail import mail
 
 
 def send_message(codigo, email):
-    msg = Message('Hello from the other side!', sender = current_app.config['MAIL_USERNAME'], recipients = ['luis.migryk@usach.cl',email])
-    msg.body = "Hey Cristian, tu codigo de recuperacion es:" + codigo
+    msg = Message('AVISO, CAMBIO DE CONTRASENA SOLICITADO', sender = current_app.config['MAIL_USERNAME'], recipients = [email])
+    msg.body = "Hola, tu codigo de recuperacion es: " + codigo + " ingresa al siguiente link para acceder al cambio http://localhost:4200/inicio/cambiaPass"
     mail.send(msg)
     return "Message sent!"
 
@@ -60,6 +60,7 @@ def created_random_pass_by_profile(user_mail, admin, alumno, apoderado, profesor
         count_profile += 1
         profesor.create_provisional_pass(user_mail,provisional_pass)
     return send_message(provisional_pass,user_mail) if count_profile!=0 else False
+
 
 def change_pass(new_password, admin, alumno, apoderado, profesor):
     if (admin != None):
