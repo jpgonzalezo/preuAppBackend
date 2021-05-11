@@ -51,11 +51,20 @@ class Prueba(gj.Document):
     #TODO: validar que id de la prueba
     @classmethod    
     def load_preguntas(cls, lista, prueba_id):
-        prueba =  Prueba.objects(id=prueba_id).first()
-        prueba.preguntas = Pregunta.create_from_excel(lista)
+        try:
+            prueba =  Prueba.objects(id=prueba_id).first()
+            if(prueba == None):
+                return {"error":"Prueba no encontrada"}
+        except:
+            return {"error": "Error en el id de la prueba"}
+
+        listado_preguntas = Pregunta.create_from_excel(lista)
+        if(len(listado_preguntas) == 0):
+            return {"error":"Problema al cargar las preguntas de la prueba, favor revisar excel"}
+        prueba.preguntas = listado_preguntas
         prueba.cantidad_preguntas = len(lista)
         prueba.save()
-        return "preguntas cargadas"
+        return {"Response":"Prueba creada con exito"}
     
     @classmethod
     def list_to_dict(cls,lista):
