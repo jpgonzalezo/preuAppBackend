@@ -2,6 +2,7 @@ from flask import Flask, Blueprint
 from flask_restful import reqparse, abort, Api, Resource
 from flask_cors import CORS
 from db import db
+from mail import mail
 from models.asignatura import Asignatura
 import json
 
@@ -9,6 +10,7 @@ app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 CORS(app)
 api_bp = Blueprint('api', __name__)
+mail.init_app(app)
 api = Api(api_bp)
 app.register_blueprint(api_bp)
 

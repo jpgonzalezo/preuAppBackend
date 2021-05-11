@@ -7,12 +7,19 @@ from models.alumno import Alumno
 from flask_restful import Api, Resource, url_for
 from libs.to_dict import mongo_to_dict
 from flask_restful import reqparse
+from utils.trata_contrasena import created_random_pass_by_profile as change_passCodigo
+from utils.trata_contrasena import validate_code_provisional, change_pass
+
+
+
 import json
 
 def init_module(api):
     api.add_resource(Login, '/login')
     api.add_resource(Logout, '/logout')
     api.add_resource(CambiarContrasena, '/cambiar_contrasena')
+    api.add_resource(CodigoRecuperacion, '/codigo_recuperacion')
+    api.add_resource(CambiaContrasenaCodigo, '/olvide_contrasena')
 
 
 class Login(Resource):
@@ -66,6 +73,57 @@ class Logout(Resource):
     def post(self):
         return {'respuesta': True}
 
+class CodigoRecuperacion(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(CodigoRecuperacion, self).__init__()
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        user_mail = data['email']
+        admin = Administrador.get_by_email_or_username(user_mail)
+        alumno = Alumno.get_by_email_or_username(user_mail)
+        apoderado = Apoderado.get_by_email_or_username(user_mail)
+        profesor = Profesor.get_by_email_or_username(user_mail)
+        result = change_passCodigo(user_mail,admin,alumno,apoderado,profesor)
+        if (result == False):
+            return 'usuario no registrado.', 404
+        else: 
+            return 'correo enviado correctamente a email indicado.', 200
+
+class CambiaContrasenaCodigo(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser()
+        self.reqparse.add_argument('auth-token', type = str, required=True, location='headers')
+        super(CambiaContrasenaCodigo, self).__init__()
+    
+    def post(self):
+        data = request.data.decode()
+        data = json.loads(data)
+        user_mail = data['email']
+        user_codigo = data['codigo']
+        user_new_pass = data['new_pass']
+        admin = Administrador.get_by_email_or_username(user_mail)
+        alumno = Alumno.get_by_email_or_username(user_mail)
+        apoderado = Apoderado.get_by_email_or_username(user_mail)
+        profesor = Profesor.get_by_email_or_username(user_mail)
+        if ( alumno != None or admin != None or apoderado != None or profesor != None):
+            lista = validate_code_provisional(admin,alumno,apoderado,profesor)
+            list_codes = lista[1]
+            count_profile = lista[0]
+            count_equals_code = list_codes.count(user_codigo)
+            if count_profile == count_equals_code:
+                return change_pass(user_new_pass, admin, alumno, apoderado, profesor), 200
+            else: 
+                return 'Código ingresado invalido', 404
+
+        else:
+            return "Usuario no encontrado", 404
+        #return change_pass(user_mail,admin,alumno,apoderado,profesor)
+
+
 class CambiarContrasena(Resource):
     def __init__(self):
         self.reqparse = reqparse.RequestParser()
@@ -92,7 +150,6 @@ class CambiarContrasena(Resource):
             user = administrador
         elif profesor != None:
             user = profesor
-        
         if user ==None:
             return {'message':'invalid_user'}
         #Obtener los campos del formulario de cambio de contraseña

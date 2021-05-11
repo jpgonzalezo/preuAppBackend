@@ -18,10 +18,11 @@ from flask import (
     abort,
     Response,
     jsonify
-    )
+)
 from utils.excel_util import create_workbook as create_excel
 from utils.validaciones import validar_rut, es_correo_valido
 from utils.excel_util import export as write_error
+
 
 class Apoderado(gj.Document):
     nombres = db.StringField()
@@ -30,6 +31,7 @@ class Apoderado(gj.Document):
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
     password = db.StringField()
+    password_provisoria = db.StringField(default="no disponible")
     direccion = db.EmbeddedDocumentField(Direccion)
     rut = db.StringField(max_length=10)
     alumno = db.ReferenceField(Alumno)
@@ -39,7 +41,7 @@ class Apoderado(gj.Document):
 
     def __str__(self):
         return self.nombres
-    
+
     def to_dict(self):
         return {
             "id": str(self.id),
@@ -53,13 +55,14 @@ class Apoderado(gj.Document):
             "alumno": self.alumno.to_dict(),
             "imagen": self.imagen
         }
-    
+
     def encrypt_password(self, password_to_encrypt):
-    	self.password = generate_password_hash(password_to_encrypt)
+        self.password = generate_password_hash(password_to_encrypt)
 
     def check_password(self, password_to_check):
         print(check_password_hash(self.password, str(password_to_check)))
         return check_password_hash(self.password, str(password_to_check))
+
     @classmethod
     def get_by_email_or_username(cls, email_or_usernmane):
         text_id = email_or_usernmane.lower()
@@ -71,6 +74,7 @@ class Apoderado(gj.Document):
     def get_by_id(cls, user_id):
         return cls.objects(id=user_id).first()
     # token alive 10 hours
+
     def get_token(self, seconds_live=36000):
         token = Serializer(current_app.config.get("TOKEN_KEY"),
                            expires_in=seconds_live)
@@ -94,14 +98,16 @@ class Apoderado(gj.Document):
 
     @classmethod
     def create_layout_excel(cls):
-        headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno"]
+        headers = ["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email",
+                   "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno"]
         result_list = [Alumno.export_to_excel()]
         return create_excel(result_list, headers, "Formato_apoderados")
 
-    #TODO: validar que el rut del alumno sea valido, el rut apoderado y correo con formato correo
+    # TODO: validar que el rut del alumno sea valido, el rut apoderado y correo con formato correo
     @classmethod
     def create_from_excel(cls, list_rows):
-        error_list = [["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email", "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno", "Error"]]
+        error_list = [["RUT", "Nombres", "Apellido Paterno", "Apellido Materno", "Email",
+                       "Telefono", "Calle", "Numero", "Comuna", "Villa/Depto", "RUN Alumno", "Error"]]
         for apoderado in list_rows:
             apoderado = list(apoderado)
             print(apoderado)
@@ -110,7 +116,7 @@ class Apoderado(gj.Document):
 
                 rut_alumno = str(apoderado[10])
                 if(rut_alumno != "None" and validar_rut(rut_alumno)):
-                    alumno = Alumno.objects(rut = str(rut_alumno)).first()
+                    alumno = Alumno.objects(rut=str(rut_alumno)).first()
                     if(alumno == None):
                         apoderado.append("Alumno no existe")
                         error_list.append(apoderado)
@@ -120,19 +126,20 @@ class Apoderado(gj.Document):
                     error_list.append(apoderado)
                     continue
 
-                if( apoderado[4] == "None" or not(es_correo_valido(apoderado[4]))):
+                if(apoderado[4] == "None" or not(es_correo_valido(apoderado[4]))):
                     apoderado.append("Correo ingresado no es valido")
                     error_list.append(apoderado)
                     continue
 
-                direccion = Direccion(calle = apoderado[6], numero = str(apoderado[7]), comuna = apoderado[8], cas_dep_of=apoderado[9])
-                apoderadoNuevo = Apoderado(rut =str(apoderado[0]),
-                                       nombres = apoderado[1],
-                                       apellido_paterno = apoderado[2],
-                                       apellido_materno = apoderado[3],
-                                       email = apoderado[4],
-                                       telefono = str(apoderado[5]),                            
-                                       direccion = direccion, alumno = alumno, imagen="default")
+                direccion = Direccion(calle=apoderado[6], numero=str(
+                    apoderado[7]), comuna=apoderado[8], cas_dep_of=apoderado[9])
+                apoderadoNuevo = Apoderado(rut=str(apoderado[0]),
+                                           nombres=apoderado[1],
+                                           apellido_paterno=apoderado[2],
+                                           apellido_materno=apoderado[3],
+                                           email=apoderado[4],
+                                           telefono=str(apoderado[5]),
+                                           direccion=direccion, alumno=alumno, imagen="default")
                 apoderadoNuevo.save()
             else:
                 apoderado.append("RUT invalido")
@@ -140,3 +147,10 @@ class Apoderado(gj.Document):
         if(len(error_list) > 1):
             return write_error(error_list, "errores")
         return "hecho"
+
+    @classmethod
+    def create_provisional_pass(cls, user_mail, provisional_pass):
+        admin = cls.get_by_email_or_username(user_mail)
+        admin.password_provisoria = provisional_pass
+        admin.save()
+        return 'hecho'

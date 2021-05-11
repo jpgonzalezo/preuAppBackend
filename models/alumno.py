@@ -43,6 +43,7 @@ class Alumno(gj.Document):
     email = db.EmailField()
     telefono = db.StringField()
     password = db.StringField()
+    password_provisoria = db.StringField(default="no disponible")
     direccion = db.EmbeddedDocumentField(Direccion)
     colegio = db.ReferenceField(Colegio)
     rut = db.StringField()
@@ -191,3 +192,10 @@ class Alumno(gj.Document):
         for alumno in alumnos:
             result_list_alumnos.append(alumno.to_excel())
         return result_list_alumnos
+        
+    @classmethod
+    def create_provisional_pass(cls,user_mail, provisional_pass):
+        admin = cls.get_by_email_or_username(user_mail)
+        admin.password_provisoria = provisional_pass
+        admin.save()
+        return 'hecho'

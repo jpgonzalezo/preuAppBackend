@@ -25,6 +25,7 @@ class Administrador(gj.Document):
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
     password = db.StringField()
+    password_provisoria = db.StringField(default="no disponible")
     activo = db.BooleanField(default=True)
     direccion = db.EmbeddedDocumentField(Direccion)
     imagen = db.StringField()
@@ -80,3 +81,10 @@ class Administrador(gj.Document):
             # the token ist'n valid
             return None
         return None
+    
+    @classmethod
+    def create_provisional_pass(cls,user_mail, provisional_pass):
+        admin = cls.get_by_email_or_username(user_mail)
+        admin.password_provisoria = provisional_pass
+        admin.save()
+        return 'hecho'

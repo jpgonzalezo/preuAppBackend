@@ -27,6 +27,7 @@ class Profesor(gj.Document):
     email = db.EmailField()
     telefono = db.StringField(max_length=12)
     password = db.StringField()
+    password_provisoria = db.StringField(default="no disponible")
     direccion = db.EmbeddedDocumentField(Direccion)
     rut = db.StringField(max_length=10)
     asignatura = db.ReferenceField(Asignatura)
@@ -86,3 +87,10 @@ class Profesor(gj.Document):
             # the token ist'n valid
             return None
         return None
+
+    @classmethod
+    def create_provisional_pass(cls,user_mail, provisional_pass):
+        admin = cls.get_by_email_or_username(user_mail)
+        admin.password_provisoria = provisional_pass
+        admin.save()
+        return 'hecho'
