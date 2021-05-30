@@ -38,7 +38,7 @@ class Video(gj.Document):
         id_video =id_video[1]
         if "&" in id_video:
             id_video = id_video.split("&")[0]
-        embed_link = "http://www.youtube.com/embed/" + id_video
+        embed_link = "https://www.youtube.com/embed/" + id_video
         video = Video(nombre=new_video['nombre'], uri=embed_link,
                       asignatura=asignatura, curso=curso)
         video.save()
