@@ -32,6 +32,7 @@ class ArchivoAsignatura(Resource):
         args = self.reqparse.parse_args()
         token = args.get('auth-token')
         profesor = Profesor.load_from_token(token)
+        print("BASE_PATH:"+current_app.config.get("BASE_PATH"))
         if profesor == None:
             return {'response': 'user_invalid'},401
         if 'file' not in request.files:
