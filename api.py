@@ -8,8 +8,8 @@ import json
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-CORS(app)
 api_bp = Blueprint('api', __name__)
+CORS(api_bp)
 mail.init_app(app)
 api = Api(api_bp)
 app.register_blueprint(api_bp)
