@@ -446,7 +446,7 @@ class Alumnos(Resource):
 
 class AlumnoImagenItem(Resource):
     def post(self, id):
-        imagen = Image.open(request.files['imagen'].stream).convert("RGB")
+        imagen = Image.open(request.files['file'].stream).convert("RGB")
         print(60*"*", os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+".jpg"))
         imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+".jpg"))
         imagen.thumbnail((800, 800))
