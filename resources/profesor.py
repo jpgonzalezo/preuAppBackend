@@ -174,7 +174,7 @@ class Profesores(Resource):
 
 class ProfesorImagenItem(Resource):
     def post(self,id):
-        profesor = Profesor.open(request.files['imagen'].stream).convert("RGB")
+        profesor = Image.open(request.files['imagen'].stream).convert("RGB")
         profesor.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/profesores", str(id)+".jpg"))
         profesor.thumbnail((800, 800))
         profesor.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/profesores", str(id)+'_thumbnail.jpg'))
