@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request, send_file
+from flask import Flask, Blueprint, jsonify, request, send_file, current_app
 from models.profesor import Profesor
 from models.direccion import Direccion
 from models.asignatura import Asignatura
@@ -174,24 +174,24 @@ class Profesores(Resource):
 
 class ProfesorImagenItem(Resource):
     def post(self,id):
-        profesor = Profesor.open(request.files['imagen'].stream).convert("RGB")
-        profesor.save(os.path.join("./uploads/profesores", str(id)+".jpg"))
+        profesor = Image.open(request.files['imagen'].stream).convert("RGB")
+        profesor.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/profesores", str(id)+".jpg"))
         profesor.thumbnail((800, 800))
-        profesor.save(os.path.join("./uploads/profesores", str(id)+'_thumbnail.jpg'))
+        profesor.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/profesores", str(id)+'_thumbnail.jpg'))
         profesor = Profesor.objects(id=id).first()
         profesor.imagen = id
         profesor.save()
         return {'Response': 'exito'}
     
     def get(self,id):
-        return send_file('uploads/profesores/'+id+'_thumbnail.jpg')
+        return send_file(current_app.config.get("BASE_PATH")+'uploads/profesores/'+id+'_thumbnail.jpg')
 
 class ProfesorImagenDefault(Resource):
     def get(self,id):
         profesor = Profesor.objects(id=id).first()
-        imagen = Image.open("./uploads/profesores/default_thumbnail.jpg")
+        imagen = Image.open(current_app.config.get("BASE_PATH")+"uploads/profesores/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join("./uploads/profesores", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/profesores", str(id)+'_thumbnail.jpg'))
         profesor.imagen = str(profesor.id)
         profesor.save()
         return { 'Response':'exito'}

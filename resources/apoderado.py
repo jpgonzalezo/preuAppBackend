@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request, send_file
+from flask import Flask, Blueprint, jsonify, request, send_file, current_app
 from models.apoderado import Apoderado
 from models.direccion import Direccion
 from models.alumno import Alumno
@@ -146,16 +146,16 @@ class Apoderados(Resource):
 class ApoderadoImagenItem(Resource):
     def post(self,id):
         imagen = Image.open(request.files['imagen'].stream).convert("RGB")
-        imagen.save(os.path.join("./uploads/apoderados", str(id)+".jpg"))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/apoderados", str(id)+".jpg"))
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join("./uploads/apoderados", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/apoderados", str(id)+'_thumbnail.jpg'))
         apoderado = Apoderado.objects(id=id).first()
         apoderado.imagen = id
         apoderado.save()
         return {'Response': 'exito','id': str(apoderado.id)}
     
     def get(self,id):
-        return send_file('uploads/apoderados/'+id+'_thumbnail.jpg')
+        return send_file(current_app.config.get("BASE_PATH")+'uploads/apoderados/'+id+'_thumbnail.jpg')
 
 class ApoderadoImagenDefault(Resource):
     def get(self,id):

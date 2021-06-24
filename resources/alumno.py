@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request, send_file
+from flask import Flask, Blueprint, jsonify, request, send_file, current_app
 from models.alumno import Alumno
 from models.direccion import Direccion
 from models.colegio import Colegio
@@ -447,26 +447,25 @@ class Alumnos(Resource):
 class AlumnoImagenItem(Resource):
     def post(self, id):
         imagen = Image.open(request.files['imagen'].stream).convert("RGB")
-        imagen.save(os.path.join("./uploads/alumnos", str(id)+".jpg"))
+        print(60*"*", os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+".jpg"))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+".jpg"))
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join(
-            "./uploads/alumnos", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+'_thumbnail.jpg'))
         alumno = Alumno.objects(id=id).first()
         alumno.imagen = id
         alumno.save()
         return {'Response': 'exito'}
 
     def get(self, id):
-        return send_file('uploads/alumnos/'+id+'_thumbnail.jpg')
+        return send_file(current_app.config.get("BASE_PATH")+'uploads/alumnos/'+id+'_thumbnail.jpg')
 
 
 class AlumnoImagenDefault(Resource):
     def get(self, id):
         alumno = Alumno.objects(id=id).first()
-        imagen = Image.open("./uploads/alumnos/default_thumbnail.jpg")
+        imagen = Image.open(current_app.config.get("BASE_PATH")+"uploads/alumnos/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join(
-            "./uploads/alumnos", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/alumnos", str(id)+'_thumbnail.jpg'))
         alumno.imagen = str(alumno.id)
         alumno.save()
         return {'Response': 'exito'}

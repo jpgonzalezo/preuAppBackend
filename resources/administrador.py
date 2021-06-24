@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, jsonify, request, send_file
+from flask import Flask, Blueprint, jsonify, request, send_file, current_app
 from models.administrador import Administrador
 from models.alumno import Alumno
 from models.apoderado import Apoderado
@@ -132,23 +132,23 @@ class Administradores(Resource):
 class AdministradorImagenItem(Resource):
     def post(self,id):
         imagen = Image.open(request.files['imagen'].stream).convert("RGB")
-        imagen.save(os.path.join("./uploads/administradores", str(id)+".jpg"))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/administradores", str(id)+".jpg"))
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join("./uploads/administradores", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/administradores", str(id)+'_thumbnail.jpg'))
         administrador = Administrador.objects(id=id).first()
         administrador.imagen = id
         administrador.save()
         return {'Response': 'exito','id': str(administrador.id)}
     
     def get(self,id):
-        return send_file('./uploads/administradores/'+id+'_thumbnail.jpg')
+        return send_file(current_app.config.get("BASE_PATH")+'uploads/administradores/'+id+'_thumbnail.jpg')
 
 class AdministradorImagenDefault(Resource):
     def get(self,id):
         administrador = Administrador.objects(id=id).first()
-        imagen = Image.open("./uploads/administradores/default_thumbnail.jpg")
+        imagen = Image.open(current_app.config.get("BASE_PATH")+"uploads/administradores/default_thumbnail.jpg")
         imagen.thumbnail((800, 800))
-        imagen.save(os.path.join("./uploads/administradores", str(id)+'_thumbnail.jpg'))
+        imagen.save(os.path.join(current_app.config.get("BASE_PATH")+"uploads/administradores", str(id)+'_thumbnail.jpg'))
         administrador.imagen = str(administrador.id)
         administrador.save()
         return { 'Response':'exito'}
