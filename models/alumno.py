@@ -159,13 +159,17 @@ class Alumno(gj.Document):
 
                 direccion = Direccion(calle=alumno[8], numero=str(alumno[9]), comuna=alumno[10], cas_dep_of=alumno[11])
                 alumnoNuevo = Alumno(rut=str(alumno[0]),
+                                     password = cls.encrypt_password(str(alumno[0])),
                                      nombres=alumno[1],
                                      apellido_paterno=alumno[2],
                                      apellido_materno=alumno[3],
                                      sexo=alumno[5],
                                      email=alumno[6],
                                      telefono=str(alumno[7]),
-                                     direccion=direccion, colegio=colegio, curso=curso, imagen="default")
+                                     direccion=direccion,
+                                     colegio=colegio,
+                                     curso=curso,
+                                     imagen="default")
                 if (alumno[4] != None and alumno[4] != ""):
                     alumnoNuevo.puntaje_ingreso = alumno[4]
                 else:
