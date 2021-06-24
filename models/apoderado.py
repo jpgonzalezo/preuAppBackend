@@ -140,6 +140,7 @@ class Apoderado(gj.Document):
                                            email=apoderado[4],
                                            telefono=str(apoderado[5]),
                                            direccion=direccion, alumno=alumno, imagen="default")
+                apoderadoNuevo.encrypt_password(str(apoderado[0]))
                 apoderadoNuevo.save()
             else:
                 apoderado.append("RUT invalido")
