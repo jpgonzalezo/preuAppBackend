@@ -57,7 +57,7 @@ class GraficoAlertasCursos(Resource):
             "labels": labels,
             "data": [
                 {"data": data_rendimiento , "label":"Rendimiento"},
-                {"data": data_asistencia, "label": "Asistencia"}
+                {"data": data_asistencia, "label": "Asistencia (%)"}
             ]
         }
 

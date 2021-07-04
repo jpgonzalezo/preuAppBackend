@@ -54,8 +54,7 @@ class CursoGraficoAsistenciaAsignaturas(Resource):
         return {
             "labels":labels,
             "data": [
-                {"data": inasistencia_lista, "label": "Inasistencia"},
-                {"data": asistencia_lista, "label": "Asistencia"},
+                {"data": asistencia_lista, "label": "Asistencia (%)"},
             ]
         }
 
@@ -130,8 +129,7 @@ class CursoGraficoAsistencia(Resource):
         return {
             "labels":labels,
             "data": [
-                {"data": inasistencia_lista, "label": "Inasistencia"},
-                {"data": asistencia_lista, "label": "Asistencia"},
+                {"data": asistencia_lista, "label": "Asistencia (%)"},
             ]
         }
 class CursoAsignatura(Resource):

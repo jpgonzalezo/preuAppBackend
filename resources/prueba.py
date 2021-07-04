@@ -317,7 +317,7 @@ class GraficoRendimientoTopicos(Resource):
                                             if respuesta.correcta:
                                                 cantidad_correctas = cantidad_correctas + 1
                     if cantidad>0:
-                        cantidad = int(100*(cantidad_correctas/cantidad))
+                        cantidad = int(cantidad_correctas)
                     data_curso.append(cantidad)
                 data.append({
                     "data": data_curso,
@@ -363,7 +363,7 @@ class GraficoRendimientoPreguntas(Resource):
                                     if respuesta.correcta:
                                         cantidad_correctas = cantidad_correctas + 1
                     if cantidad>0:
-                        cantidad = int(100*(cantidad_correctas/cantidad))
+                        cantidad = int(cantidad_correctas)
                     data_curso.append(cantidad)
                 data.append({
                     "data": data_curso,

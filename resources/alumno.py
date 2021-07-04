@@ -92,15 +92,13 @@ class AlumnoGraficoAsistencia(Resource):
             "grafico_asignatura": {
                 "labels": labels,
                 "data": [
-                    {"data": data_inasistencia_asignatura, "label": "Inasistencia"},
-                    {"data": data_asistencia_asignatura, "label": "Asistencia"}
+                    {"data": data_asistencia_asignatura, "label": "Asistencia (%)"}
                 ]
             },
             "grafico_anual": {
                 "labels": labels_anual,
                 "data": [
-                    {"data": data_inasistencia_anual, "label": "Inasistencia"},
-                    {"data": data_asistencia_anual, "label": "Asistencia"}
+                    {"data": data_asistencia_anual, "label": "Asistencia (%)"}
                 ]
             }
         }

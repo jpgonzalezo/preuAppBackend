@@ -84,7 +84,6 @@ class GraficoRendimientoAsistenciaToken(Resource):
         return {
             "labels":labels,
             "data": [
-                {'data':data_inasistencia,'label':'Inasistencia'},
                 {'data':data_asistencia,'label':'Asistencia'}
             ]
         }
@@ -126,7 +125,6 @@ class GraficoRendimientoAsistencia(Resource):
         return {
             "labels":labels,
             "data": [
-                {'data':data_inasistencia,'label':'Inasistencia'},
                 {'data':data_asistencia,'label':'Asistencia'}
             ]
         }
@@ -202,9 +200,9 @@ class GraficoRendimientoEvaluacionesToken(Resource):
 
         return {"labels":labels,
                 "data": [
-                    {"data": data_ensayo, "label": "Ensayos"},
-                    {"data": data_taller, "label": "Talleres"},
-                    {"data": data_tarea, "label": "Tareas"},
+                    {"data": data_ensayo, "label": "Puntos ensayos"},
+                    {"data": data_taller, "label": "Puntos talleres"},
+                    {"data": data_tarea, "label": "Puntos tareas"},
                 ]}
 
 class GraficoRendimientoEvaluaciones(Resource):
