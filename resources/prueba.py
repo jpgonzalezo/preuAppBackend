@@ -300,25 +300,22 @@ class GraficoRendimientoTopicos(Resource):
         prueba = Prueba.objects(id=id).first()
         for topico in prueba.topicos:
             labels.append(topico.nombre)
-        
+
+        evaluaciones = Evaluacion.objects(prueba=prueba).all()
         for curso in Curso.objects().all():
             if prueba.asignatura in curso.asignaturas:
                 data_curso = []
                 for topico in prueba.topicos:
                     cantidad_correctas = 0
-                    cantidad = 0
                     for pregunta in prueba.preguntas:
                         if topico == pregunta.topico:
-                            for evaluacion in Evaluacion.objects(prueba=prueba).all():
+                            for evaluacion in evaluaciones:
                                 if evaluacion.alumno.curso == curso:
                                     for respuesta in evaluacion.respuestas:
                                         if respuesta.numero_pregunta == pregunta.numero_pregunta:
-                                            cantidad = cantidad + 1
                                             if respuesta.correcta:
                                                 cantidad_correctas = cantidad_correctas + 1
-                    if cantidad>0:
-                        cantidad = int(cantidad_correctas)
-                    data_curso.append(cantidad)
+                    data_curso.append(cantidad_correctas)
                 data.append({
                     "data": data_curso,
                     "label": curso.nombre
