@@ -290,9 +290,12 @@ class Autoevaluacion(Resource):
         token = args.get('auth-token')
         alumno = Alumno.load_from_token(token)
         if alumno == None:
-           return {'response': 'user_invalid'},401
+           return {'Response': 'user_invalid'},401
         body = request.data.decode()
         body = json.loads(body)
+        prueba = Prueba.objects(id=body["data"]["prueba_id"]).first()
+        if prueba==None or not prueba.visible:
+            return {'Response': 'disabled_prueba'}
         return Evaluacion.evaluar_prueba(alumno.id, body["data"])
 
 
