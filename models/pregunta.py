@@ -27,9 +27,9 @@ class Pregunta(db.EmbeddedDocument):
         }
 
     @classmethod
-    def create_layout_excel(cls, asignatura_id):
+    def create_layout_excel(cls, topicos):
         headers = ["Numero", "Alternativa Correcta", "Id. Topico"]
-        result_list = [Topico.export_to_excel(asignatura_id)]
+        result_list = [Topico.export_to_excel(topicos)]
         return create_excel(result_list, headers, "Formato_preguntas")
 
     # TODO: validar id del topico y q venga la alternativa entre los valores permitidos
