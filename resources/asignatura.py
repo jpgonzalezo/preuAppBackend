@@ -156,7 +156,7 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                 cantidad_ensayo_con_evaluaciones = 0
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="ENSAYO").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
-                    if evaluaciones:
+                    if evaluaciones != None:
                         cantidad_ensayo_con_evaluaciones = cantidad_ensayo_con_evaluaciones + 1
                         cant_evaluciones = 0
                         promedio = 0
@@ -175,7 +175,7 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                 cantidad_taller_con_evaluaciones = 0
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="TALLER").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
-                    if evaluaciones:
+                    if evaluaciones != None:
                         cantidad_taller_con_evaluaciones = cantidad_taller_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
@@ -194,7 +194,7 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                 cantidad_tarea_con_evaluaciones = 0
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="TAREA").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
-                    if evaluaciones:
+                    if evaluaciones != None:
                         cantidad_tarea_con_evaluaciones = cantidad_tarea_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
