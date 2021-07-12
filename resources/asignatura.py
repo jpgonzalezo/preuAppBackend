@@ -196,7 +196,7 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                         cantidad_tarea_con_evaluaciones = cantidad_tarea_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
-                        for evaluacion in Evaluacion.objects(prueba=prueba.id).all():
+                        for evaluacion in evaluaciones:
                             if evaluacion.alumno.curso == curso:
                                 promedio = evaluacion.puntaje + promedio
                                 cant_evaluciones = cant_evaluciones+1
