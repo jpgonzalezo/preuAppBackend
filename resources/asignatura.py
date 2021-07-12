@@ -167,7 +167,8 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_ensayo = promedio_ensayo + promedio
-                promedio_ensayo = int(promedio_ensayo/cantidad_ensayo_con_evaluaciones)
+                if cantidad_ensayo_con_evaluaciones>0:
+                    promedio_ensayo = int(promedio_ensayo/cantidad_ensayo_con_evaluaciones)
                 data_ensayo.append(promedio_ensayo)
 
                 promedio_taller = 0
@@ -185,7 +186,8 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                         if cant_evaluciones >0:
                             promedio = promedio / cant_evaluciones
                         promedio_taller = promedio_taller + promedio
-                promedio_taller = int(promedio_taller/cantidad_taller_con_evaluaciones)
+                if cantidad_taller_con_evaluaciones>0:
+                    promedio_taller = int(promedio_taller/cantidad_taller_con_evaluaciones)
                 data_taller.append(promedio_taller)
 
                 promedio_tarea = 0
@@ -203,7 +205,8 @@ class GraficoRendimientoEvaluacionesToken(Resource):
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_tarea = promedio_tarea + promedio
-                promedio_tarea = int(promedio_tarea/cantidad_tarea_con_evaluaciones)
+                if cantidad_tarea_con_evaluaciones:
+                    promedio_tarea = int(promedio_tarea/cantidad_tarea_con_evaluaciones)
                 data_tarea.append(promedio_tarea)
 
 
@@ -252,7 +255,8 @@ class GraficoRendimientoEvaluaciones(Resource):
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_ensayo = promedio_ensayo + promedio
-                promedio_ensayo = int(promedio_ensayo/cantidad_ensayo_con_evaluaciones)
+                if cantidad_ensayo_con_evaluaciones:
+                    promedio_ensayo = int(promedio_ensayo/cantidad_ensayo_con_evaluaciones)
                 data_ensayo.append(promedio_ensayo)
 
                 promedio_taller = 0
@@ -270,7 +274,8 @@ class GraficoRendimientoEvaluaciones(Resource):
                         if cant_evaluciones >0:
                             promedio = promedio / cant_evaluciones
                         promedio_taller = promedio_taller + promedio
-                promedio_taller = int(promedio_taller/cantidad_taller_con_evaluaciones)
+                if cantidad_taller_con_evaluaciones:
+                    promedio_taller = int(promedio_taller/cantidad_taller_con_evaluaciones)
                 data_taller.append(promedio_taller)
 
                 promedio_tarea = 0
@@ -288,7 +293,8 @@ class GraficoRendimientoEvaluaciones(Resource):
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_tarea = promedio_tarea + promedio
-                promedio_tarea = int(promedio_tarea/cantidad_tareas_con_evaluaciones)
+                if cantidad_tareas_con_evaluaciones:
+                    promedio_tarea = int(promedio_tarea/cantidad_tareas_con_evaluaciones)
                 data_tarea.append(promedio_tarea)
 
 
