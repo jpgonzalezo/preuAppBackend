@@ -255,16 +255,19 @@ class GraficoRendimientoEvaluaciones(Resource):
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="ENSAYO").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
                     if evaluaciones:
-                        cantidad_ensayo_con_evaluaciones = cantidad_ensayo_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
+                        banderaEvaluacionesCurso = False
                         for evaluacion in Evaluacion.objects(prueba=prueba.id).all():
                             if evaluacion.alumno.curso == curso:
                                 cant_evaluciones = cant_evaluciones +1
                                 promedio = evaluacion.puntaje + promedio
+                                banderaEvaluacionesCurso = True
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_ensayo = promedio_ensayo + promedio
+                        if banderaEvaluacionesCurso:
+                            cantidad_ensayo_con_evaluaciones = cantidad_ensayo_con_evaluaciones + 1
                 if cantidad_ensayo_con_evaluaciones:
                     promedio_ensayo = int(promedio_ensayo/cantidad_ensayo_con_evaluaciones)
                 data_ensayo.append(promedio_ensayo)
@@ -274,16 +277,19 @@ class GraficoRendimientoEvaluaciones(Resource):
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="TALLER").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
                     if evaluaciones:
-                        cantidad_taller_con_evaluaciones = cantidad_taller_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
+                        banderaEvaluacionesCurso = False
                         for evaluacion in Evaluacion.objects(prueba=prueba.id).all():
                             if evaluacion.alumno.curso == curso:
                                 cant_evaluciones = cant_evaluciones +1
                                 promedio = evaluacion.puntaje + promedio
+                                banderaEvaluacionesCurso = True
                         if cant_evaluciones >0:
                             promedio = promedio / cant_evaluciones
                         promedio_taller = promedio_taller + promedio
+                        if banderaEvaluacionesCurso:
+                            cantidad_taller_con_evaluaciones = cantidad_taller_con_evaluaciones + 1
                 if cantidad_taller_con_evaluaciones:
                     promedio_taller = int(promedio_taller/cantidad_taller_con_evaluaciones)
                 data_taller.append(promedio_taller)
@@ -293,16 +299,19 @@ class GraficoRendimientoEvaluaciones(Resource):
                 for prueba in Prueba.objects(asignatura=asignatura.id, tipo="TAREA").all():
                     evaluaciones = Evaluacion.objects(prueba=prueba.id).all()
                     if evaluaciones:
-                        cantidad_tareas_con_evaluaciones = cantidad_tareas_con_evaluaciones + 1
                         promedio = 0
                         cant_evaluciones = 0
+                        banderaEvaluacionesCurso = False
                         for evaluacion in Evaluacion.objects(prueba=prueba.id).all():
                             if evaluacion.alumno.curso == curso:
                                 promedio = evaluacion.puntaje + promedio
                                 cant_evaluciones = cant_evaluciones+1
+                                banderaEvaluacionesCurso = True
                         if cant_evaluciones>0:
                             promedio = promedio / cant_evaluciones
                         promedio_tarea = promedio_tarea + promedio
+                        if banderaEvaluacionesCurso:
+                            cantidad_tareas_con_evaluaciones = cantidad_tareas_con_evaluaciones + 1
                 if cantidad_tareas_con_evaluaciones:
                     promedio_tarea = int(promedio_tarea/cantidad_tareas_con_evaluaciones)
                 data_tarea.append(promedio_tarea)
