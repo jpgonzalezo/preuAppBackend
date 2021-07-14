@@ -7,7 +7,7 @@ from mail import mail
 
 def send_message(codigo, email):
     msg = Message('AVISO, CAMBIO DE CONTRASENA SOLICITADO', sender = current_app.config['MAIL_USERNAME'], recipients = [email])
-    msg.body = "Hola, tu codigo de recuperacion es: " + codigo + " ingresa al siguiente link para acceder al cambio http://localhost:4200/inicio/cambiaPass"
+    msg.body = "Hola, tu codigo de recuperacion es: " + codigo + " ingresa al siguiente link para acceder al cambio https://preusanbernardo.cl/inicio/cambiaPass"
     mail.send(msg)
     return "Message sent!"
 
