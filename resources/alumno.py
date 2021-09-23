@@ -65,12 +65,12 @@ class AlumnoGraficoAsistencia(Resource):
         for asignatura in alumno.curso.asignaturas:
             labels.append(asignatura.nombre)
             presentes = 0
-            for asistencia in Asistencia.objects(asignatura=asignatura).all():
+            for asistencia in Asistencia.objects(asignatura=asignatura,curso=alumno.curso).all():
                 if alumno in asistencia.alumnos_presentes:
                     presentes = presentes + 1
-            if Asistencia.objects(asignatura=asignatura).count() > 0:
+            if Asistencia.objects(asignatura=asignatura,curso=alumno.curso).count() > 0:
                 presentes = int(
-                    (presentes/Asistencia.objects(asignatura=asignatura).count())*100)
+                    (presentes/Asistencia.objects(asignatura=asignatura,curso=alumno.curso).count())*100)
             data_asistencia_asignatura.append(presentes)
             data_inasistencia_asignatura.append(100-presentes)
 
@@ -255,7 +255,7 @@ class AlumnoHojaVida(Resource):
             promedio_leng = int((ponderacion_lenguaje) /
                                 evaluaciones_lenguaje.__len__())
 
-        asistencias = Asistencia.objects().all()
+        asistencias = Asistencia.objects(curso=alumno.curso).all()
         cantidad_presente = 0
         for asistencia in asistencias:
             for alumno_presente in asistencia.alumnos_presentes:
