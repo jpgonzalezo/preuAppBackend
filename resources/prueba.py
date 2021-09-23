@@ -306,20 +306,40 @@ class GraficoRendimientoTopicos(Resource):
             if prueba.asignatura in curso.asignaturas:
                 data_curso = []
                 for topico in prueba.topicos:
-                    cantidad_correctas = 0
+                    #DETERMINAR LA CANTIDAD DE PREGUNTAS ASOCIADAS AL TOPICO Y CUALES SON LAS PREGUNTAS
+                    cantidad_preguntas_topico = 0
+                    numeros_pregunta_topico = []
                     for pregunta in prueba.preguntas:
                         if topico == pregunta.topico:
-                            for evaluacion in evaluaciones:
-                                if evaluacion.alumno.curso == curso:
-                                    for respuesta in evaluacion.respuestas:
-                                        if respuesta.numero_pregunta == pregunta.numero_pregunta:
-                                            if respuesta.correcta:
-                                                cantidad_correctas = cantidad_correctas + 1
-                    data_curso.append(cantidad_correctas)
+                            cantidad_preguntas_topico += 1
+                            numeros_pregunta_topico.append(pregunta.numero_pregunta)
+
+                    #SACAR EL PROMEDIO DE TODAS LAS EVALUACIONES
+                    suma_promedio_topico_evaluacion = 0
+                    cant_promedio_topico_evaluacion = 0
+                    for evaluacion in evaluaciones:
+                        #ALUMNO PERTENECE AL CURSO 
+                        if evaluacion.alumno.curso == curso:
+                            cantidad_correcta_evaluacion = 0
+                            for respuesta in evaluacion.respuestas:
+                                if respuesta.numero_pregunta in numeros_pregunta_topico:
+                                    if respuesta.correcta:
+                                        cantidad_correcta_evaluacion += 1
+                            #SACAR EL PROMEDIO PARA EVALUACION DEL ALUMNO
+                            promedio_alumno = int((cantidad_correcta_evaluacion/cantidad_preguntas_topico)*100)
+                            suma_promedio_topico_evaluacion += promedio_alumno
+                            cant_promedio_topico_evaluacion += 1
+                      
+                    if cantidad_preguntas_topico>0 and cant_promedio_topico_evaluacion>0:
+                        data_curso.append(int(suma_promedio_topico_evaluacion/cant_promedio_topico_evaluacion))
+                    else:
+                        data_curso.append(0)
                 data.append({
                     "data": data_curso,
                     "label": curso.nombre
                 })
+                print("labels: ", labels)
+                print("data ", data)
 
         return {
             "labels":labels,
