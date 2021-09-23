@@ -37,7 +37,7 @@ class AsistenciasAlumnoAsignatura(Resource):
         if alumno == None and apoderado == None:
             return {'response': 'user_invalid'},401
         asistencias = []
-        for asistencia in Asistencia.objects(asignatura=asignatura).all():
+        for asistencia in Asistencia.objects(asignatura=asignatura,curso=alumno.curso).all():
             if alumno in asistencia.alumnos_presentes:
                 asistencias.append(
                     {
