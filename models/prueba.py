@@ -13,7 +13,7 @@ TIPOS_PRUEBA = [
     ("TAREA", "TAREA"),
     ]
 class Prueba(gj.Document):
-    nombre = db.StringField(max_length=50)
+    nombre = db.StringField(max_length=250)
     cantidad_preguntas = db.IntField()
     asignatura = db.ReferenceField(Asignatura)
     fecha = db.DateTimeField(default=datetime.now)
