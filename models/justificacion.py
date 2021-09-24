@@ -16,5 +16,5 @@ class Justificacion(db.Document):
             "asistencia": self.asistencia.to_dict_short(),
             "alumno": self.alumno.to_dict(),
             "causa": self.causa,
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }

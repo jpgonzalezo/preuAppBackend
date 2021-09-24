@@ -40,7 +40,7 @@ class Prueba(gj.Document):
             "nombre": self.nombre,
             "cantidad_preguntas": self.cantidad_preguntas,
             "asignatura": self.asignatura.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S"),
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S"),
             "tipo": self.tipo,
             "topicos": topicos,
             "preguntas": preguntas,

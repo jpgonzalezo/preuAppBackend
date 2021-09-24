@@ -42,7 +42,7 @@ class AsistenciasAlumnoAsignatura(Resource):
                 asistencias.append(
                     {
                         "id": str(asistencia.id),
-                        "fecha": asistencia.fecha.strftime("%m/%d/%Y %H:%M:%S"),
+                        "fecha": asistencia.fecha.strftime("%Y/%m/%d %H:%M:%S"),
                         "presente": True,
                         "justificacion": "Sin justificación"
                     }
@@ -53,7 +53,7 @@ class AsistenciasAlumnoAsignatura(Resource):
                     justificacion = Justificacion.objects(asistencia=asistencia,alumno=alumno).first().causa
                 asistencias.append({
                     "id": str(asistencia.id),
-                    "fecha": asistencia.fecha.strftime("%m/%d/%Y %H:%M:%S"),
+                    "fecha": asistencia.fecha.strftime("%Y/%m/%d %H:%M:%S"),
                     "presente": False,
                     "justificacion": justificacion
                 })
@@ -73,6 +73,29 @@ class AsistenciaItem(Resource):
         if alumno == None and apoderado == None and administrador == None and profesor == None:
             return {'response': 'user_invalid'},401
         return Asistencia.objects(id=id).first().to_dict()
+    def put(self, id):
+        args = self.reqparse.parse_args()
+        token = args.get('auth-token')
+        alumno = Alumno.load_from_token(token)
+        apoderado = Apoderado.load_from_token(token)
+        administrador = Administrador.load_from_token(token)
+        profesor = Profesor.load_from_token(token)
+        if alumno == None and apoderado == None and administrador == None and profesor == None:
+            return {'response': 'user_invalid'},401
+        asistencia = Asistencia.objects(id=id).first()
+        asistencia.alumnos_presentes = []
+        asistencia.alumnos_ausentes = []
+        data = request.data.decode()
+        data = json.loads(data)
+        for alumno in data['presentes']:
+            alumno_aux = Alumno.objects(id=alumno['id']).first()
+            asistencia.alumnos_presentes.append(alumno_aux.id)
+        for alumno in data['ausentes']:
+            alumno_aux = Alumno.objects(id=alumno['id']).first()
+            asistencia.alumnos_ausentes.append(alumno_aux.id)
+        asistencia.save()
+        return {'Response': 'exito'}
+
 
 class AsistenciaCurso(Resource):
     def __init__(self):

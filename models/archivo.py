@@ -23,7 +23,7 @@ class Archivo(gj.Document):
             "nombre": self.nombre,
             "path": self.path,
             "asignatura": self.asignatura.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }
 
     # literal los class method son los services en java

@@ -17,5 +17,5 @@ class Anotacion(gj.Document):
             "contenido": self.contenido,
             "profesor": self.profesor.to_dict(),
             "alumno": self.alumno.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }

@@ -32,7 +32,7 @@ class Observacion(gj.Document):
             "tipo": self.tipo,
             "nombre_personal": self.nombre_personal,
             "alumno": self.alumno.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }
 
 class ObservacionProfesor(gj.Document):
@@ -51,5 +51,5 @@ class ObservacionProfesor(gj.Document):
             "anonimo": self.anonimo,
             "alumno": self.alumno.to_dict(),
             "profesor": self.profesor.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }

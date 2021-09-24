@@ -18,7 +18,7 @@ class Asistencia(db.Document):
             "alumnos_presentes" : len(self.alumnos_presentes),
             "alumnos_ausentes" : len(self.alumnos_ausentes),
             "curso": self.curso.nombre,
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S"),
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S"),
         }
 
     def to_dict(self):
@@ -40,5 +40,5 @@ class Asistencia(db.Document):
             "alumnos_presentes" : alumnos_presentes,
             "alumnos_ausentes" : alumnos_ausentes,
             "curso": self.curso.to_dict(),
-            "fecha": self.fecha.strftime("%m/%d/%Y %H:%M:%S")
+            "fecha": self.fecha.strftime("%Y/%m/%d %H:%M:%S")
         }
