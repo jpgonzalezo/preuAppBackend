@@ -16,7 +16,7 @@ Click==7.0
 cloudpickle==1.6.0
 dask==2021.3.0
 dateutils==0.6.6
-distributed==2021.3.0
+distributed==2021.10.0
 dnspython==2.1.0
 email-validator==1.1.2
 et-xmlfile==1.0.1
