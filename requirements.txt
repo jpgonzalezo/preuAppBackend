@@ -38,7 +38,7 @@ Jinja2==2.11.3
 jmespath==0.10.0
 locket==0.2.1
 lxml==4.6.2
-Mako==1.0.8
+Mako==1.2.2
 MarkupSafe==1.1.1
 mongoengine==0.23.0
 mongoengine-goodjson==1.1.8
