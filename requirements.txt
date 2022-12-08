@@ -10,7 +10,7 @@ awswrangler==2.5.0
 Babel==2.6.0
 beautifulsoup4==4.9.3
 bokeh==2.3.0
-certifi==2020.12.5
+certifi==2022.12.7
 chardet==4.0.0
 Click==7.0
 cloudpickle==1.6.0
